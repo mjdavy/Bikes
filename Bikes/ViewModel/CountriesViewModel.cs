@@ -4,6 +4,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Data;
+using Windows.UI.Xaml.Data;
 
 namespace Bikes.ViewModel
 {

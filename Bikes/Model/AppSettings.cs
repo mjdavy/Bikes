@@ -1,29 +1,20 @@
 ﻿using System;
-using System.Net;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Ink;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
-using System.IO.IsolatedStorage;
 using System.Diagnostics;
-using Microsoft.Phone.Maps.Controls;
+using Windows.Storage;
+using Windows.UI.Xaml.Controls.Maps;
 
 namespace Bikes.Model
 {
     public class AppSettings
     {
-        private IsolatedStorageSettings isolatedStore;
+        private ApplicationDataContainer localSettings;
         private static AppSettings appSettingsInstance = null;
         
         public AppSettings()
         {
             try
             {
-                this.isolatedStore = IsolatedStorageSettings.ApplicationSettings;
+                var localSettings = ApplicationData.Current.LocalSettings;
             }
             catch (Exception e)
             {
@@ -75,11 +66,11 @@ namespace Bikes.Model
             }
         }
 
-        public MapCartographicMode MapMode
+        public MapStyle MapMode
         {
             get
             {
-                return GetValueOrDefault<MapCartographicMode>(MapModeSetting, MapCartographicMode.Road);
+                return GetValueOrDefault<MapStyle>(MapModeSetting, MapStyle.Road);
             }
             set
             {
@@ -124,19 +115,14 @@ namespace Bikes.Model
             }
         }
 
-        public void SaveSettings()
-        {
-            this.isolatedStore.Save();
-        }
-
         private valueType GetValueOrDefault<valueType>(string Key, valueType defaultValue)
         {
             valueType value;
 
             // If the key exists, retrieve the value.
-            if (isolatedStore.Contains(Key))
+            if (localSettings.Values.Keys.Contains(Key))
             {
-                value = (valueType)isolatedStore[Key];
+                value = (valueType)localSettings.Values[Key];
             }
             // Otherwise, use the default value.
             else
@@ -159,20 +145,20 @@ namespace Bikes.Model
             bool valueChanged = false;
 
             // If the key exists
-            if (isolatedStore.Contains(key))
+            if (localSettings.Values.Keys.Contains(Key))
             {
                 // If the value has changed
-                if (isolatedStore[key] != value)
+                if (localSettings.Values[key] != value)
                 {
                     // Store the new value
-                    isolatedStore[key] = value;
+                    localSettings.Values[key] = value;
                     valueChanged = true;
                 }
             }
             // Otherwise create the key.
             else
             {
-                isolatedStore.Add(key, value);
+                localSettings.Values.Add(key, value);
                 valueChanged = true;
             }
 

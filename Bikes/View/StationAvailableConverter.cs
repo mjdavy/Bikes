@@ -1,14 +1,7 @@
 ﻿using System;
-using System.Net;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Ink;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
-using System.Windows.Data;
+using Windows.UI;
+using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Media;
 
 namespace Bikes.View
 {
@@ -17,7 +10,7 @@ namespace Bikes.View
         private static Brush whiteBrush = new SolidColorBrush(Colors.White);
         private static Brush grayBrush = new SolidColorBrush(Colors.DarkGray);
 
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object Convert(object value, Type targetType, object parameter, string language)
         {
             bool unavailable = (bool)value;
 
@@ -31,7 +24,7 @@ namespace Bikes.View
             }
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
             throw new NotImplementedException();
         }

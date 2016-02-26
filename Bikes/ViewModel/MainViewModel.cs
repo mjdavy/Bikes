@@ -1,22 +1,16 @@
 ﻿
 using Bikes.Model;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Device.Location;
-using System.Windows;
-using System.Windows.Data;
 using System.Windows.Input;
-using System.Windows.Threading;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using System.Net.NetworkInformation;
 using Windows.Devices.Geolocation;
-using System.Threading.Tasks;
 using GalaSoft.MvvmLight.Threading;
 using GalaSoft.MvvmLight.Messaging;
-using Microsoft.Phone.Maps.Controls;
+using Windows.UI.Xaml.Controls.Maps;
+using Windows.UI.Xaml.Data;
 
 namespace Bikes.ViewModel
 {
@@ -74,7 +68,7 @@ namespace Bikes.ViewModel
             set;
         }
 
-        public MapCartographicMode MapMode
+        public MapStyle MapMode
         {
             get
             {
