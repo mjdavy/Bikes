@@ -92,10 +92,10 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="Model\BikeShares.xsd">
+    <None Include="Assets\BikeShares.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Model\bikeUrls.xlsx" />
+    <None Include="Assets\bikeUrls.xlsx" />
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
@@ -113,6 +113,7 @@
     <Compile Include="Model\Countries.cs" />
     <Compile Include="Model\Country.cs" />
     <Compile Include="Model\CountryChangedMessage.cs" />
+    <Compile Include="Model\GeoUtil.cs" />
     <Compile Include="Model\IStationDataParser.cs" />
     <Compile Include="Model\NextBikeParser.cs" />
     <Compile Include="Model\SettingsChangedMessage.cs" />
@@ -144,7 +145,7 @@
     <None Include="Bikes_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Model\BikeShares.xml" />
+    <Content Include="Assets\BikeShares.xml" />
     <Content Include="Model\Cities.md.txt" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />

@@ -13,6 +13,7 @@ using System.Device.Location;
 using System.Threading.Tasks;
 using Microsoft.Phone.Maps.Services;
 using System.Collections.Generic;
+using Windows.Devices.Geolocation;
 
 namespace Bikes.Model
 {
@@ -29,27 +30,30 @@ namespace Bikes.Model
         }
 
         // MJDTODO - Refactor  DRY
-        public static GeoCoordinate ToBixiGeoCoordinate(this XElement xe, GeoCoordinate emptyValue)
+        public static BasicGeoposition ToBixiGeoCoordinate(this XElement xe, BasicGeoposition emptyValue)
         {
             double latitude = double.Parse(xe.Element("lat").Value);
             double longitude = double.Parse(xe.Element("long").Value);
-            return xe == null ? emptyValue : new GeoCoordinate(latitude, longitude);
+            return xe == null ? emptyValue :
+                new BasicGeoposition() { Latitude = latitude, Longitude = longitude };
         }
 
         // MJDTODO - Refactor  DRY
-        public static GeoCoordinate ToBCycleGeoCoordinate(this XElement xe, GeoCoordinate emptyValue)
+        public static BasicGeoposition ToBCycleGeoCoordinate(this XElement xe, BasicGeoposition emptyValue)
         {
             double latitude = double.Parse(xe.Element("Latitude").Value);
             double longitude = double.Parse(xe.Element("Longitude").Value);
-            return xe == null ? emptyValue : new GeoCoordinate(latitude, longitude);
+            return xe == null ? emptyValue : 
+                new BasicGeoposition() { Latitude = latitude, Longitude = longitude };
         }
 
         // MJDTODO - Refactor  DRY
-        public static GeoCoordinate ToBixi2GeoCoordinate(this XElement xe, GeoCoordinate emptyValue)
+        public static BasicGeoposition ToBixi2GeoCoordinate(this XElement xe, BasicGeoposition emptyValue)
         {
             double latitude = double.Parse(xe.Element("latitude").Value);
             double longitude = double.Parse(xe.Element("longitude").Value);
-            return xe == null ? emptyValue : new GeoCoordinate(latitude, longitude);
+            return xe == null ? emptyValue : 
+                new BasicGeoposition() { Latitude = latitude, Longitude = longitude };
         }
 
         public static Task<string> DownloadStringTaskAsync(this WebClient webClient, Uri uri)

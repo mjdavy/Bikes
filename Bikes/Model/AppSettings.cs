@@ -145,7 +145,7 @@ namespace Bikes.Model
             bool valueChanged = false;
 
             // If the key exists
-            if (localSettings.Values.Keys.Contains(Key))
+            if (localSettings.Values.Keys.Contains(key))
             {
                 // If the value has changed
                 if (localSettings.Values[key] != value)

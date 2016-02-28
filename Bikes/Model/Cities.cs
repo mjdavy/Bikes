@@ -1,21 +1,11 @@
 ﻿using System;
-using System.Net;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Ink;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
 using System.Collections.Generic;
-using System.Device.Location;
 using System.Reflection;
 using System.Xml.Linq;
-using Microsoft.Phone.Maps.Services;
 using System.Threading.Tasks;
 using Windows.Devices.Geolocation;
 using GalaSoft.MvvmLight.Messaging;
+using Windows.Storage;
 
 namespace Bikes.Model
 {
@@ -32,19 +22,14 @@ namespace Bikes.Model
             }
         }
 
-        public static City FindMyCity(GeoCoordinate myLocation)
+        public static City FindMyCity(BasicGeoposition myLocation)
         {
             City myCity = null;
             double closestCity = double.MaxValue;
 
-            if (myLocation == null || myLocation.IsUnknown)
-            {
-                return myCity;
-            }
-
             foreach (var city in AllCities.Values)
             {
-                double distanceToCityCenter = myLocation.GetDistanceTo(city.Center);
+                double distanceToCityCenter = GeoUtil.DistanceTo(myLocation, city.Center);
 
                 if (distanceToCityCenter < closestCity)
                 {
@@ -90,24 +75,14 @@ namespace Bikes.Model
             if (currentCity != null && !string.IsNullOrEmpty(currentCity.Name))
             {
                 AppSettings.Instance.CurrentCity = currentCity.Name;
-                AppSettings.Instance.SaveSettings();
             }
         }
 
         public static void LoadCities()
         {
-            var assembly = Assembly.GetExecutingAssembly();
-            using (var resourceStream = assembly.GetManifestResourceStream("Bikes.Model.BikeShares.xml"))
-            {
-                LoadCities(resourceStream);
-            }
-        }
-
-        public static void LoadCities(System.IO.Stream stream)
-        {
             cities.Clear();
 
-            var bikeSharesXml = XDocument.Load(stream);
+            var bikeSharesXml = XDocument.Load("ms-appx:///Assets/BikeShares.xml");
             foreach (var xmlBikeShare in bikeSharesXml.Descendants("BikeShare"))
             {
                 var vendor = xmlBikeShare.Element("Vendor").Value;
