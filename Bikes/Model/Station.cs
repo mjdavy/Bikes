@@ -1,17 +1,9 @@
 ﻿using System;
-using System.Net;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Ink;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
-using System.Device.Location;
-using Bikes.ViewModel;
 using System.Diagnostics;
 using GalaSoft.MvvmLight;
+using Windows.Foundation;
+using Windows.UI.Xaml;
+using Windows.Devices.Geolocation;
 
 namespace Bikes.Model
 {
@@ -20,7 +12,7 @@ namespace Bikes.Model
         private const int pieRadius = 10;
 
         private string name;
-        private GeoCoordinate location;
+        private Geocoordinate location;
         private int bikeCount;
         private int emptyDockCount;
         private Point pieArc;
@@ -35,7 +27,7 @@ namespace Bikes.Model
         {
         }
 
-        public static Station Create(int id, string name, int bikeCount, int emptyDockCount, bool installed, bool locked, GeoCoordinate location)
+        public static Station Create(int id, string name, int bikeCount, int emptyDockCount, bool installed, bool locked, Geocoordinate location)
         {
             var station = new Station();
 
@@ -138,7 +130,7 @@ namespace Bikes.Model
             }
         }
         
-        public GeoCoordinate Location
+        public Geocoordinate Location
         {
             get
             {

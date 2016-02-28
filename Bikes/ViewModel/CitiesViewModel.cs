@@ -1,47 +1,29 @@
-﻿using System;
-using System.Net;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Ink;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
-using System.Device.Location;
-using System.Collections.ObjectModel;
-using System.Windows.Data;
-using System.ComponentModel;
-using System.Diagnostics;
+﻿using Bikes.Model;
 using GalaSoft.MvvmLight;
-using Bikes.Model;
 using GalaSoft.MvvmLight.Messaging;
+using System.Collections.ObjectModel;
 
 namespace Bikes.ViewModel
 {
     public class CitiesViewModel : ObservableObject
     {
-        private ObservableCollection<City> cityCollection;
-        private CollectionViewSource citySource;
+        private City _selectedCity;
+        private ObservableCollection<City> _citySource;
 
         public CitiesViewModel()
         {
+            Initialize();
         }
 
-        public CollectionViewSource CitySource
+        public ObservableCollection<City> CitySource
         {
             get
             {
-                if (this.citySource == null)
-                {
-                    this.Initialize();
-                }
-                return this.citySource;
+                return _citySource;
             }
             set
             {
-                this.citySource = value;
-                this.RaisePropertyChanged("CitySource");
+                Set(() => CitySource, ref _citySource, value);
             }
         }
 
@@ -49,12 +31,11 @@ namespace Bikes.ViewModel
         {
             get
             {
-                return this.CitySource.View.CurrentItem as City;
+                return _selectedCity;
             }
             set
             {
-                this.CitySource.View.MoveCurrentTo(value);
-                this.RaisePropertyChanged("SelectedCity");
+                Set(() => SelectedCity, ref _selectedCity, value);
             }
         }
 
@@ -80,32 +61,25 @@ namespace Bikes.ViewModel
 
         public void SortByCityName()
         {
-            this.CitySource.SortDescriptions.Clear();
-            this.CitySource.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
+            
         }
 
         public void Initialize()
-        {
-            this.citySource = new CollectionViewSource();
-            this.cityCollection = new ObservableCollection<City>(Cities.AllCities.Values);
-            this.CitySource.Source = this.cityCollection;
-            this.CitySource.Filter += CitySource_Filter;
+        { 
+            this.CitySource = new ObservableCollection<City>(Cities.AllCities.Values);
             this.SortByCityName();
             this.SelectedCity = Cities.CurrentCity;
             this.SelectedCountry = SelectedCity.Country;
         }
 
-        void CitySource_Filter(object sender, FilterEventArgs e)
+        bool FilterCountries(City filterCity)
         {
-            City filterCity = e.Item as City;
-
-            e.Accepted = filterCity.Country.Equals(Countries.CurrentCountry) ? true : false;
+            return filterCity.Country.Equals(Countries.CurrentCountry) ? true : false;
         }
 
         internal void OnCountryChanged(CountryChangedMessage msg)
         {
             this.SelectedCountry = msg.Country;
-            this.CitySource.View.Refresh();
         }
     }
 }

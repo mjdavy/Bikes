@@ -114,20 +114,19 @@ namespace Bikes.Model
 
         }
 
-        public static async Task<GeoCoordinate> FindMyLocationAsync()
+        public static async Task<Geocoordinate> FindMyLocationAsync()
         {
-            var location = new GeoCoordinate();
             Geolocator geolocator = new Geolocator();
             geolocator.DesiredAccuracyInMeters = 50;
+            Geoposition geoposition;
 
             try
             {
-                Geoposition geoposition = await geolocator.GetGeopositionAsync(
+                geoposition = await geolocator.GetGeopositionAsync(
                     maximumAge: TimeSpan.FromMinutes(5),
                     timeout: TimeSpan.FromSeconds(10)
                     );
 
-                location = new GeoCoordinate(geoposition.Coordinate.Latitude, geoposition.Coordinate.Longitude);
             }
             catch (Exception ex)
             {
@@ -142,7 +141,7 @@ namespace Bikes.Model
                 }
             }
 
-            return location;
+            return geoposition;
 
         }
 

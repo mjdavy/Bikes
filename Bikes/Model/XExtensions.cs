@@ -1,19 +1,9 @@
 ﻿using System;
-using System.Net;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Ink;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
-using System.Xml.Linq;
-using System.Device.Location;
-using System.Threading.Tasks;
-using Microsoft.Phone.Maps.Services;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Xml.Linq;
 using Windows.Devices.Geolocation;
+using Windows.Services.Maps;
 
 namespace Bikes.Model
 {
@@ -55,50 +45,5 @@ namespace Bikes.Model
             return xe == null ? emptyValue : 
                 new BasicGeoposition() { Latitude = latitude, Longitude = longitude };
         }
-
-        public static Task<string> DownloadStringTaskAsync(this WebClient webClient, Uri uri)
-        {
-            var tcs = new TaskCompletionSource<string>();
-
-            webClient.DownloadStringCompleted += (s, e) =>
-            {
-                if (e.Error != null)
-                {
-                    tcs.SetException(e.Error);
-                }
-                else
-                {
-                    tcs.SetResult(e.Result);
-                }
-            };
-
-            webClient.DownloadStringAsync(uri);
-
-            return tcs.Task;
-        }
-
-        public static Task<IList<MapLocation>> QueryAsyncTask(this ReverseGeocodeQuery reverseGeocode, GeoCoordinate coordinate)
-        {
-            var tcs = new TaskCompletionSource<IList<MapLocation>>();
-
-            reverseGeocode.QueryCompleted += (s, e) =>
-                {
-                    if (e.Error != null)
-                    {
-                        tcs.SetException(e.Error);
-                    }
-                    else
-                    {
-                        tcs.SetResult(e.Result);
-                    }
-                };
-
-            reverseGeocode.GeoCoordinate = coordinate;
-            reverseGeocode.QueryAsync();
-
-            return tcs.Task;
-
-        }
-
     }
 }

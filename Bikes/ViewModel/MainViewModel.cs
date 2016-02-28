@@ -11,6 +11,7 @@ using GalaSoft.MvvmLight.Threading;
 using GalaSoft.MvvmLight.Messaging;
 using Windows.UI.Xaml.Controls.Maps;
 using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml;
 
 namespace Bikes.ViewModel
 {
@@ -19,11 +20,9 @@ namespace Bikes.ViewModel
         private float mapZoomLevel = 15.0f;
         private string currentStatus = string.Empty;
         private Geolocator geolocator = null;
-
         private StationLoader stationLoader = new StationLoader();
-        private CollectionViewSource stationSource = new CollectionViewSource();
-        private GeoCoordinate myLocation;
-        private GeoCoordinate mapCenter = GeoCoordinate.Unknown;
+        private Geocoordinate myLocation;
+        private Geocoordinate mapCenter;
         private DispatcherTimer timer = new DispatcherTimer();
         private bool disposed = false;
         private bool isUpdating;
@@ -35,9 +34,13 @@ namespace Bikes.ViewModel
             this.StationCollection = new ObservableCollection<Station>();
             this.StationSource.Source = this.StationCollection;
             this.timer.Interval = TimeSpan.FromMinutes(1.0);
-            this.timer.Tick += new EventHandler(TimerTick);
-            this.StationSource.Filter += new FilterEventHandler(StationSource_Filter);
+            this.timer.Tick += Timer_Tick; 
             this.isMyLocationVisible = Visibility.Collapsed;
+        }
+
+        private void Timer_Tick(object sender, object e)
+        {
+            this.LoadStationDataAsync();
         }
 
         ~MainViewModel()
@@ -115,7 +118,7 @@ namespace Bikes.ViewModel
             }
         }
 
-        public GeoCoordinate MyLocation
+        public Geocoordinate MyLocation
         {
             get
             {
@@ -264,7 +267,7 @@ namespace Bikes.ViewModel
 
             foreach (var station in this.StationCollection)
             {
-                double dist = myLocation.GetDistanceTo(station.Location);
+                double dist = GeoUtil.DistanceTo(myLocation,station.Location);
                 if (dist < minDist && condition(station))
                 {
                     nearestStation = station;
@@ -307,7 +310,7 @@ namespace Bikes.ViewModel
 
         private void TimerTick(object sender, EventArgs e)
         {
-            this.LoadStationDataAsync();
+           
         }
 
         private void SetLoadingStatus(bool status, string message)

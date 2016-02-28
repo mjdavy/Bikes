@@ -1,10 +1,8 @@
 ﻿using Bikes.Model;
 using GalaSoft.MvvmLight;
-using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Windows.Data;
-using Windows.UI.Xaml.Data;
+using System.Linq;
 
 namespace Bikes.ViewModel
 {
@@ -16,8 +14,8 @@ namespace Bikes.ViewModel
     /// </summary>
     public class CountriesViewModel : ViewModelBase
     {
-        private ObservableCollection<Country> countryCollection;
-        private CollectionViewSource countrySource;
+        private ObservableCollection<Country> _countrySource;
+        private Country _selectedCountry;
 
         /// <summary>
         /// Initializes a new instance of the CountriesViewModel class.
@@ -26,20 +24,15 @@ namespace Bikes.ViewModel
         {
         }
 
-        public CollectionViewSource CountrySource
+        public ObservableCollection<Country> CountrySource
         {
             get
             {
-                if (this.countrySource == null)
-                {
-                    this.Initialize();
-                }
-                return this.countrySource;
+                return _countrySource;
             }
             set
             {
-                this.countrySource = value;
-                this.RaisePropertyChanged("CountrySource");
+                Set(() => CountrySource, ref _countrySource, value);
             }
         }
 
@@ -47,29 +40,25 @@ namespace Bikes.ViewModel
         {
             get
             {
-                return this.CountrySource.View.CurrentItem as Country;
+                return _selectedCountry;
             }
             set
             {
-                this.CountrySource.View.MoveCurrentTo(value);
-                this.RaisePropertyChanged("SelectedCountry");
+                Set(() => SelectedCountry, ref _selectedCountry, value);
             }
         }
 
         private void Initialize()
         {
-            this.countrySource = new CollectionViewSource();
-            this.countryCollection = new ObservableCollection<Country>(Countries.AllCountries.Values);
-            this.CountrySource.Source = this.countryCollection;
-           
-            this.SortByCountryName();
+            var sortedCountries = SortByCountryName(Countries.AllCountries.Values);
+            this.CountrySource = new ObservableCollection<Country>(sortedCountries);
             this.SelectedCountry = Countries.CurrentCountry;
         }
 
-        private void SortByCountryName()
+        private IOrderedEnumerable<Country> SortByCountryName(ICollection<Country> countries)
         {
-            this.CountrySource.SortDescriptions.Clear();
-            this.CountrySource.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
+            var sorted = from c in countries orderby c.Name select c;
+            return sorted; 
         }
 
         internal void OnCountryChanged(CountryChangedMessage msg)
