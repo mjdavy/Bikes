@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Net;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using System.Net.Http;
 
 namespace Bikes.Model
 {
@@ -24,18 +24,15 @@ namespace Bikes.Model
 
         public async Task<StationData> LoadDataAsync(City myCity)
         {
-            WebClient webClient = new WebClient();
-            if (!myCity.UseCacheHack)
-            {
-                webClient.Headers[HttpRequestHeader.IfModifiedSince] = DateTime.UtcNow.ToString();
-            }
-
+            var client = new HttpClient();
+            client.DefaultRequestHeaders.Add("user-agent", "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; WOW64; Trident/6.0)");
+            
             var stationData = new StationData();
             
             try
             {
-                var rawStationData = await webClient.DownloadStringTaskAsync(myCity.DataSource);
-                stationData = await ParseDataAsync(myCity, rawStationData);
+                var rawStationData = await client.GetStringAsync(myCity.DataSource);
+                stationData = await ParseDataAsync(myCity, rawStationData);  
             }
             catch (Exception ex)
             {
