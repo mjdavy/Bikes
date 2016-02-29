@@ -54,7 +54,7 @@ namespace Bikes.Model
             set;
         }
 
-        public Geocoordinate Center
+        public BasicGeoposition Center
         {
             get;
             set;

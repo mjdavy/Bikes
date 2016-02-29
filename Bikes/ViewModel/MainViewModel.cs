@@ -21,8 +21,8 @@ namespace Bikes.ViewModel
         private string currentStatus = string.Empty;
         private Geolocator geolocator = null;
         private StationLoader stationLoader = new StationLoader();
-        private Geocoordinate myLocation;
-        private Geocoordinate mapCenter;
+        private BasicGeoposition myLocation;
+        private BasicGeoposition mapCenter;
         private DispatcherTimer timer = new DispatcherTimer();
         private bool disposed = false;
         private bool isUpdating;
@@ -118,7 +118,7 @@ namespace Bikes.ViewModel
             }
         }
 
-        public Geocoordinate MyLocation
+        public BasicGeoposition MyLocation
         {
             get
             {
@@ -144,7 +144,7 @@ namespace Bikes.ViewModel
             }
         }
 
-        public GeoCoordinate MapCenter
+        public BasicGeoposition MapCenter
         {
             get
             {
@@ -337,28 +337,25 @@ namespace Bikes.ViewModel
             this.StationSource.SortDescriptions.Add(new SortDescription("Distance", ListSortDirection.Ascending));
         }
 
-        private void StationSource_Filter(object sender, FilterEventArgs e)
+        private bool StationSourceFilter(Station station)
         {
-            var station = e.Item as Station;
             if (station == null)
             {
-                return;
+                return false;
             }
 
             var myCity = Cities.CurrentCity;
             if (myCity == null)
             {
-                return;
+                return false;
             }
 
-            if (station.Location.GetDistanceTo(myCity.Center) < 50000)
+            if (GeoUtil.DistanceTo(station.Location, myCity.Center) < 50000)
             {
-                e.Accepted = true;
+                return true;
             }
-            else
-            {
-                e.Accepted = false;
-            }
+
+            return false;
 
         }
 

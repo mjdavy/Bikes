@@ -41,5 +41,10 @@ namespace Bikes.Model
 
             return dist;
         }
+
+        static public bool AreEqual(BasicGeoposition pos1, BasicGeoposition pos2)
+        {
+            return (pos1.Latitude == pos2.Latitude && pos1.Longitude == pos2.Longitude);
+        }
     }
 }

@@ -12,7 +12,7 @@ namespace Bikes.Model
         private const int pieRadius = 10;
 
         private string name;
-        private Geocoordinate location;
+        private BasicGeoposition location;
         private int bikeCount;
         private int emptyDockCount;
         private Point pieArc;
@@ -27,7 +27,7 @@ namespace Bikes.Model
         {
         }
 
-        public static Station Create(int id, string name, int bikeCount, int emptyDockCount, bool installed, bool locked, Geocoordinate location)
+        public static Station Create(int id, string name, int bikeCount, int emptyDockCount, bool installed, bool locked, BasicGeoposition location)
         {
             var station = new Station();
 
@@ -72,7 +72,7 @@ namespace Bikes.Model
                 this.Name = other.Name;
             }
 
-            if (this.Location != other.Location)
+            if (!GeoUtil.AreEqual(this.Location, other.Location))
             {
                 this.Location = other.Location;
             }
@@ -130,7 +130,7 @@ namespace Bikes.Model
             }
         }
         
-        public Geocoordinate Location
+        public BasicGeoposition Location
         {
             get
             {

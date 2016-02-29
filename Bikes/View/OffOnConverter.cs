@@ -5,7 +5,7 @@
 
 using System;
 using System.Globalization;
-using System.Windows.Data;
+using Windows.UI.Xaml.Data;
 
 namespace Bikes.View
 {
@@ -15,15 +15,7 @@ namespace Bikes.View
     /// <QualityBand>Preview</QualityBand>
     public class OffOnConverter : IValueConverter
     {
-        /// <summary>
-        /// Converts a value.
-        /// </summary>
-        /// <param name="value">The value produced by the binding source.</param>
-        /// <param name="targetType">The type of the binding target property.</param>
-        /// <param name="parameter">The converter parameter to use.</param>
-        /// <param name="culture">The culture to use in the converter.</param>
-        /// <returns>A converted value. If the method returns null, the valid null value is used.</returns>
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public object Convert(object value, Type targetType, object parameter, string language)
         {
             if (targetType == null)
             {
@@ -40,15 +32,7 @@ namespace Bikes.View
             throw new ArgumentException("The type was unexpected.", "value");
         }
 
-        /// <summary>
-        /// Converts a value.
-        /// </summary>
-        /// <param name="value">The value produced by the binding source.</param>
-        /// <param name="targetType">The type of the binding target property.</param>
-        /// <param name="parameter">The converter parameter to use.</param>
-        /// <param name="culture">The culture to use in the converter.</param>
-        /// <returns>A converted value. If the method returns null, the valid null value is used.</returns>
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
             throw new NotImplementedException();
         }

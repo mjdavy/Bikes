@@ -1,19 +1,10 @@
-﻿using System;
-using System.Net;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Ink;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
-using System.Windows.Data;
-using System.Collections.ObjectModel;
-using Bikes.Model;
+﻿using Bikes.Model;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Messaging;
-using Microsoft.Phone.Maps.Controls;
+using System;
+using System.Collections.ObjectModel;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls.Maps;
 
 namespace Bikes.ViewModel
 {
@@ -33,14 +24,13 @@ namespace Bikes.ViewModel
             set
             {
                 AppSettings.Instance.DefaultToNearestCity = value;
-                AppSettings.Instance.SaveSettings();
                 this.RaisePropertyChanged("DefaultToNearestCity");
                 this.RaisePropertyChanged("EnableCityChooser");
                 Messenger.Default.Send<SettingsChangedMessage>(new SettingsChangedMessage(AppSettings.DefaultToNearestCitySetting));
             }
         }
 
-        public ObservableCollection<MapCartographicMode> MapModes { get; set; }
+        public ObservableCollection<MapStyle> MapModes { get; set; }
 
         public Visibility EnableCityChooser
         {
@@ -76,7 +66,7 @@ namespace Bikes.ViewModel
             }
         }
 
-        public MapCartographicMode MapMode
+        public MapStyle MapMode
         {
             get
             {
@@ -110,9 +100,8 @@ namespace Bikes.ViewModel
 
         private void InitializeMapModes()
         {
-            MapCartographicMode[] modes = Enum.GetValues(typeof(MapCartographicMode)) as MapCartographicMode[];
-            var collection = Array.AsReadOnly<MapCartographicMode>(modes);
-            this.MapModes = new ObservableCollection<MapCartographicMode>(collection);
+            MapStyle[] modes = Enum.GetValues(typeof(MapStyle)) as MapStyle[];
+            this.MapModes = new ObservableCollection<MapStyle>(modes);
         }
 
     }

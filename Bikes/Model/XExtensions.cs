@@ -29,11 +29,11 @@ namespace Bikes.Model
         }
 
         // MJDTODO - Refactor  DRY
-        public static BasicGeoposition ToBCycleGeoCoordinate(this XElement xe, BasicGeoposition emptyValue)
+        public static BasicGeoposition ToBCycleGeoCoordinate(this XElement xe)
         {
             double latitude = double.Parse(xe.Element("Latitude").Value);
             double longitude = double.Parse(xe.Element("Longitude").Value);
-            return xe == null ? emptyValue : 
+            return xe == null ? new BasicGeoposition { Longitude = 0, Latitude = 0 } : 
                 new BasicGeoposition() { Latitude = latitude, Longitude = longitude };
         }
 

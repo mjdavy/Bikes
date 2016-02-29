@@ -1,21 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
-using Microsoft.Phone.Controls;
+﻿using Bikes.Model;
 using Bikes.ViewModel;
-using Bikes.Model;
+using System.Linq;
+using Windows.UI.Xaml.Controls;
 
 namespace Bikes.View
 {
-    public partial class CitiesPage : PhoneApplicationPage
+    public partial class CitiesPage : Page
     {
         public CitiesPage()
         {
@@ -33,12 +23,12 @@ namespace Bikes.View
             }
         }
 
-        private void ListBox_Tap(object sender, System.Windows.Input.GestureEventArgs e)
+
+        private void ListBox_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
         {
             var vm = this.DataContext as CitiesViewModel;
             vm.SetCurrentCity();
             this.NavigationService.GoBack();
         }
-
     }
 }

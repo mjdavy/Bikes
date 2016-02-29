@@ -1,19 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Navigation;
-using Microsoft.Phone.Controls;
-using Microsoft.Phone.Shell;
-using Bikes.Model;
+﻿using Bikes.Model;
 using Bikes.ViewModel;
 using GalaSoft.MvvmLight.Messaging;
+using System.Linq;
+using Windows.UI.Xaml.Controls;
 
 namespace Bikes.View
 {
-    public partial class CountriesPage : PhoneApplicationPage
+    public sealed partial class CountriesPage : Page
     {
         // Constructor
         public CountriesPage()
@@ -34,7 +27,8 @@ namespace Bikes.View
             }
         }
 
-        private void ListBox_Tap(object sender, System.Windows.Input.GestureEventArgs e)
+
+        private void ListBox_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
         {
             var vm = this.DataContext as CountriesViewModel;
 
@@ -44,7 +38,7 @@ namespace Bikes.View
             };
 
             Messenger.Default.Send<CountryChangedMessage>(msg);
-            this.NavigationService.GoBack();
+           // FIXME this.NavigationService.GoBack();
         }
 
         // Sample code for building a localized ApplicationBar

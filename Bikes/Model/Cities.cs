@@ -89,8 +89,8 @@ namespace Bikes.Model
                 var cityName = xmlBikeShare.Element("City").Value;
                 var country = new Country(xmlBikeShare.Element("Country").Value);
                 var serviceUrl = xmlBikeShare.Element("Url").Value;
-                var location = xmlBikeShare.ToBCycleGeoCoordinate(GeoCoordinate.Unknown);
                 var cacheHack = xmlBikeShare.Element("CacheHack").ToInt(0) == 0 ? false : true;
+                var location = xmlBikeShare.ToBCycleGeoCoordinate();
                 var city = new City
                     {
                         Vendor = (City.VendorType)Enum.Parse(typeof(City.VendorType), vendor, true),
@@ -114,19 +114,19 @@ namespace Bikes.Model
 
         }
 
-        public static async Task<Geocoordinate> FindMyLocationAsync()
+        public static async Task<BasicGeoposition> FindMyLocationAsync()
         {
             Geolocator geolocator = new Geolocator();
             geolocator.DesiredAccuracyInMeters = 50;
-            Geoposition geoposition;
 
             try
             {
-                geoposition = await geolocator.GetGeopositionAsync(
+                var pos = await geolocator.GetGeopositionAsync(
                     maximumAge: TimeSpan.FromMinutes(5),
                     timeout: TimeSpan.FromSeconds(10)
                     );
 
+                return new BasicGeoposition { Latitude = pos.Coordinate.Latitude, Longitude = pos.Coordinate.Longitude };
             }
             catch (Exception ex)
             {
@@ -141,7 +141,7 @@ namespace Bikes.Model
                 }
             }
 
-            return geoposition;
+            return null; // FIXME
 
         }
 
