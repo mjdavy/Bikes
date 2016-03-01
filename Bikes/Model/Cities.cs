@@ -114,7 +114,7 @@ namespace Bikes.Model
 
         }
 
-        public static async Task<BasicGeoposition> FindMyLocationAsync()
+        public static async Task<Geoposition> FindMyLocationAsync()
         {
             Geolocator geolocator = new Geolocator();
             geolocator.DesiredAccuracyInMeters = 50;
@@ -126,7 +126,7 @@ namespace Bikes.Model
                     timeout: TimeSpan.FromSeconds(10)
                     );
 
-                return new BasicGeoposition { Latitude = pos.Coordinate.Latitude, Longitude = pos.Coordinate.Longitude };
+                return pos;
             }
             catch (Exception ex)
             {
@@ -150,7 +150,12 @@ namespace Bikes.Model
             if (AppSettings.Instance.DefaultToNearestCity)
             {
                 var location = await FindMyLocationAsync();
-                CurrentCity = FindMyCity(location);
+
+                if (location != null)
+                {
+                    var position = new BasicGeoposition { Latitude = location.Coordinate.Latitude, Longitude = location.Coordinate.Longitude };
+                    CurrentCity = FindMyCity(position);
+                }
             }
             else
             {

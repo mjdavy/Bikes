@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Xml.Linq;
+using Windows.Devices.Geolocation;
 
 namespace Bikes.Model
 {
@@ -24,7 +25,7 @@ namespace Bikes.Model
                     var bikes = stationElement.Attribute("bikes");
                     var bikeRacks = stationElement.Attribute("bike_racks");
 
-                    GeoCoordinate location = new GeoCoordinate(double.Parse(lat.Value), double.Parse(lng.Value));
+                    var location = new BasicGeoposition { Latitude = double.Parse(lat.Value), Longitude = double.Parse(lng.Value) };
                     int free = bikeRacks == null ? 0 : int.Parse(bikeRacks.Value);
                     int bikeCount = bikes == null ? 0 : this.CountBikes(bikes.Value);
                     int id = int.Parse(uid.Value);

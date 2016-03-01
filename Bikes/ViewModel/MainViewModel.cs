@@ -10,8 +10,9 @@ using Windows.Devices.Geolocation;
 using GalaSoft.MvvmLight.Threading;
 using GalaSoft.MvvmLight.Messaging;
 using Windows.UI.Xaml.Controls.Maps;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Bikes.ViewModel
 {
@@ -27,12 +28,13 @@ namespace Bikes.ViewModel
         private bool disposed = false;
         private bool isUpdating;
         private Visibility isMyLocationVisible;
+        private ObservableCollection<Station> _stationSource;
+        private Station _currentStation;
 
         public MainViewModel()
         {
             this.InitializeCommands();
-            this.StationCollection = new ObservableCollection<Station>();
-            this.StationSource.Source = this.StationCollection;
+            this.StationSource = new ObservableCollection<Station>();
             this.timer.Interval = TimeSpan.FromMinutes(1.0);
             this.timer.Tick += Timer_Tick; 
             this.isMyLocationVisible = Visibility.Collapsed;
@@ -52,23 +54,30 @@ namespace Bikes.ViewModel
         }
 
         #region public properties
-        public CollectionViewSource StationSource
+       
+
+        public ObservableCollection<Station> StationSource
         {
             get
             {
-                return this.stationSource;
+                return _stationSource;
             }
             set
             {
-                this.stationSource = value;
-                this.RaisePropertyChanged("StationSource");
+                Set(() => StationSource, ref _stationSource, value);
             }
         }
 
-        public ObservableCollection<Station> StationCollection
+        public Station CurrentStation
         {
-            get;
-            set;
+            get
+            {
+                return _currentStation;
+            }
+            set
+            {
+                Set(() => CurrentStation, ref _currentStation, value);
+            }
         }
 
         public MapStyle MapMode
@@ -164,7 +173,8 @@ namespace Bikes.ViewModel
         {
             this.InitializeGeoLocator();
             await Cities.InitializeAsync();
-            this.MyLocation = await Cities.FindMyLocationAsync();
+            var position = await Cities.FindMyLocationAsync();
+            this.MyLocation = new BasicGeoposition { Latitude = position.Coordinate.Latitude, Longitude = position.Coordinate.Longitude };
             this.CenterMapToMyLocation();
             this.LoadStationDataAsync();
         }
@@ -217,7 +227,7 @@ namespace Bikes.ViewModel
 
         public void SelectStation(Station station)
         {
-            Station oldStation = this.StationSource.View.CurrentItem as Station;
+            Station oldStation = this.CurrentStation;
             
             if (oldStation != null)
             {
@@ -227,13 +237,13 @@ namespace Bikes.ViewModel
             if (station != null)
             {
                 // stupid hack to fix zorder
-                this.StationCollection.Remove(station);
-                this.StationCollection.Add(station);
+                this.StationSource.Remove(station);
+                this.StationSource.Add(station);
 
                 station.DetailsVisibility = Visibility.Visible;
             }
 
-            this.StationSource.View.MoveCurrentTo(station);
+            this.CurrentStation = station;
         }
 
         private void CenterMapToMyLocation()
@@ -265,7 +275,7 @@ namespace Bikes.ViewModel
             double minDist = Double.MaxValue;
             Station nearestStation = null;
 
-            foreach (var station in this.StationCollection)
+            foreach (var station in this.StationSource)
             {
                 double dist = GeoUtil.DistanceTo(myLocation,station.Location);
                 if (dist < minDist && condition(station))
@@ -291,14 +301,14 @@ namespace Bikes.ViewModel
 
                     foreach (var station in data.Stations)
                     {
-                        var index = this.StationCollection.IndexOf(station);
+                        var index = this.StationSource.IndexOf(station);
                         if (index == -1)
                         {
-                            this.StationCollection.Add(station);
+                            this.StationSource.Add(station);
                         }
                         else
                         {
-                            var item = this.StationCollection[index];
+                            var item = this.StationSource[index];
                             item.Update(station);
                         }
                     }
@@ -321,20 +331,12 @@ namespace Bikes.ViewModel
 
         public void UpdateDistances()
         {
-            this.stationSource.SortDescriptions.Clear();
-            
-            foreach (var station in this.StationCollection)
+            foreach (var station in this.StationSource)
             {
-                station.Distance = (int)station.Location.GetDistanceTo(this.myLocation);
+                station.Distance = (int)(GeoUtil.DistanceTo(station.Location, this.myLocation) * 1000.0);
             }
-            this.Sort();
-            
-        }
 
-        private void Sort()
-        {
-            this.StationSource.SortDescriptions.Clear();
-            this.StationSource.SortDescriptions.Add(new SortDescription("Distance", ListSortDirection.Ascending));
+            this.StationSource.OrderBy(x => x.Distance);
         }
 
         private bool StationSourceFilter(Station station)
@@ -373,7 +375,7 @@ namespace Bikes.ViewModel
         {
             DispatcherHelper.CheckBeginInvokeOnUI(() =>
             {
-                this.MyLocation = new GeoCoordinate(args.Position.Coordinate.Latitude, args.Position.Coordinate.Longitude);
+                this.MyLocation = new BasicGeoposition { Latitude = args.Position.Coordinate.Latitude, Longitude = args.Position.Coordinate.Longitude };
             });
             
         }
@@ -454,7 +456,7 @@ namespace Bikes.ViewModel
         {
             if (msg.ChangedSetting == AppSettings.CurrentCitySetting)
             {
-                this.StationCollection.Clear();
+                this.StationSource.Clear();
             }
             else if (msg.ChangedSetting == AppSettings.MapModeSetting)
             {

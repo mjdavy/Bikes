@@ -22,7 +22,7 @@ namespace Bikes.Model
                 double decLat = (double)lat / 1000000.0;
                 double declong = (double)lng / 1000000.0;
 
-                var station = Station.Create(id, name, bikes, free, true, false, new GeoCoordinate(decLat, declong));
+                var station = Station.Create(id, name, bikes, free, true, false, new Windows.Devices.Geolocation.BasicGeoposition { Latitude = decLat, Longitude = declong });
                 data.Stations.Add(station);
             }
 
