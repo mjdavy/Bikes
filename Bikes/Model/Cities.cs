@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Windows.Devices.Geolocation;
 using GalaSoft.MvvmLight.Messaging;
 using Windows.Storage;
+using System.IO;
 
 namespace Bikes.Model
 {
@@ -78,12 +79,19 @@ namespace Bikes.Model
             }
         }
 
-        public static void LoadCities()
+        public static async void LoadCities()
         {
             cities.Clear();
 
-            var bikeSharesXml = XDocument.Load("ms-appx:///Assets/BikeShares.xml");
-            foreach (var xmlBikeShare in bikeSharesXml.Descendants("BikeShare"))
+            var bikeShares = new Uri("ms-appx:///Assets/BikeShares.xml");
+            StorageFile sFile = await StorageFile.GetFileFromApplicationUriAsync(bikeShares);
+            XDocument doc = null;
+            using (var stream = await sFile.OpenStreamForReadAsync())
+            {
+                doc = XDocument.Load(stream);
+            }
+
+            foreach (var xmlBikeShare in doc.Descendants("BikeShare"))
             {
                 var vendor = xmlBikeShare.Element("Vendor").Value;
                 var cityName = xmlBikeShare.Element("City").Value;
@@ -168,7 +176,7 @@ namespace Bikes.Model
                 CurrentCity = currentCity = Cities.AllCities["London"];
             }
 
-            Countries.CurrentCountry = CurrentCity.Country;
+            Countries.CurrentCountry = CurrentCity == null ? null : CurrentCity.Country;
         }
 
         internal static async Task InitializeAsync()

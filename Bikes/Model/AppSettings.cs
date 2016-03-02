@@ -14,7 +14,7 @@ namespace Bikes.Model
         {
             try
             {
-                var localSettings = ApplicationData.Current.LocalSettings;
+                localSettings = ApplicationData.Current.LocalSettings;
             }
             catch (Exception e)
             {

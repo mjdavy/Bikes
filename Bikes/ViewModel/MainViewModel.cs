@@ -13,6 +13,7 @@ using Windows.UI.Xaml.Controls.Maps;
 using Windows.UI.Xaml;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Bikes.ViewModel
 {
@@ -131,12 +132,11 @@ namespace Bikes.ViewModel
         {
             get
             {
-                return this.myLocation;
+                return myLocation;
             }
             set
             {
-                this.myLocation = value;
-                this.RaisePropertyChanged("MyLocation");
+                Set(() => MyLocation, ref myLocation, value);
             }
         }
 
@@ -157,12 +157,11 @@ namespace Bikes.ViewModel
         {
             get
             {
-                return this.mapCenter;
+                return mapCenter;
             }
             set
             {
-                this.mapCenter = value;
-                this.RaisePropertyChanged("MapCenter");
+                Set(() => MapCenter, ref mapCenter, value);
             }
         }
 
@@ -171,12 +170,16 @@ namespace Bikes.ViewModel
         // First time start up
         public async void Start()
         {
-            this.InitializeGeoLocator();
+            await this.InitializeGeoLocator();
             await Cities.InitializeAsync();
             var position = await Cities.FindMyLocationAsync();
-            this.MyLocation = new BasicGeoposition { Latitude = position.Coordinate.Latitude, Longitude = position.Coordinate.Longitude };
-            this.CenterMapToMyLocation();
-            this.LoadStationDataAsync();
+
+            if (position != null)
+            {
+                this.MyLocation = new BasicGeoposition { Latitude = position.Coordinate.Latitude, Longitude = position.Coordinate.Longitude };
+                this.CenterMapToMyLocation();
+                this.LoadStationDataAsync();
+            }
         }
 
         public async void LoadStationDataAsync()
@@ -353,26 +356,55 @@ namespace Bikes.ViewModel
 
         }
 
-        private void InitializeGeoLocator()
+        private async Task InitializeGeoLocator()
         {
-            geolocator = new Geolocator();
-            geolocator.DesiredAccuracy = PositionAccuracy.High;
-            geolocator.MovementThreshold = 20; // The units are meters.
+            var accessStatus = await Geolocator.RequestAccessAsync();
+            string status;
+            switch (accessStatus)
+            {
+                case GeolocationAccessStatus.Allowed:
+                    // If DesiredAccuracy or DesiredAccuracyInMeters are not set (or value is 0), DesiredAccuracy.Default is used.
+                    geolocator = new Geolocator { DesiredAccuracyInMeters = 20, MovementThreshold = 10 };
 
-            geolocator.StatusChanged += geolocator_StatusChanged;
-            geolocator.PositionChanged += geolocator_PositionChanged;
+                    // Subscribe to the PositionChanged event to get location updates.
+                    geolocator.PositionChanged += Geolocator_PositionChanged; ;
+
+
+                    // Subscribe to the StatusChanged event to get updates of location status changes.
+                    geolocator.StatusChanged += Geolocator_StatusChanged;
+
+                    
+                    Geoposition pos = await geolocator.GetGeopositionAsync();
+
+                    UpdateLocationData(pos);
+                    break;
+
+                case GeolocationAccessStatus.Denied:
+                    status = "Access to location is denied.";
+                    UpdateLocationData(null);
+                    break;
+
+                case GeolocationAccessStatus.Unspecified:
+                    status = "Unspecified error.";
+                    UpdateLocationData(null);
+                    break;
+            }
         }
 
-        void geolocator_PositionChanged(Geolocator sender, PositionChangedEventArgs args)
+        private void Geolocator_PositionChanged(Geolocator sender, PositionChangedEventArgs args)
         {
             DispatcherHelper.CheckBeginInvokeOnUI(() =>
             {
-                this.MyLocation = new BasicGeoposition { Latitude = args.Position.Coordinate.Latitude, Longitude = args.Position.Coordinate.Longitude };
+                UpdateLocationData(args.Position);
             });
-            
         }
 
-        void geolocator_StatusChanged(Geolocator sender, StatusChangedEventArgs args)
+        private void UpdateLocationData(Geoposition pos)
+        {
+            this.MyLocation = new BasicGeoposition { Latitude = pos.Coordinate.Latitude, Longitude = pos.Coordinate.Longitude };
+        }
+
+        private void Geolocator_StatusChanged(Geolocator sender, StatusChangedEventArgs args)
         {
             string status = "location unkown";
 
@@ -392,6 +424,9 @@ namespace Bikes.ViewModel
                     break;
                 case PositionStatus.Ready:
                     // the location service is generating geopositions as specified by the tracking parameters
+                    break;
+                case PositionStatus.NotAvailable:
+                    status = "Location not available on this version of the OS.";
                     break;
                 case PositionStatus.NotInitialized:
                     status = "location tracking stopped";

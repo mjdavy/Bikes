@@ -49,11 +49,11 @@ namespace Bikes.ViewModel
             SimpleIoc.Default.Register<CitiesViewModel>();
             SimpleIoc.Default.Register<CountriesViewModel>();
 
-            Messenger.Default.Register<SettingsChangedMessage>(this.MainViewModel, this.MainViewModel.OnSettingsChanged);
-            Messenger.Default.Register<StatusMessage>(this.MainViewModel, this.MainViewModel.OnStatusChanged);
-            Messenger.Default.Register<SettingsChangedMessage>(this.SettingsViewModel, this.SettingsViewModel.OnSettingsChanged);
-            Messenger.Default.Register<CountryChangedMessage>(this.CitiesViewModel, this.CitiesViewModel.OnCountryChanged);
-            Messenger.Default.Register<CountryChangedMessage>(this.CountriesViewModel, this.CountriesViewModel.OnCountryChanged);
+            //Messenger.Default.Register<SettingsChangedMessage>(this.MainViewModel, this.MainViewModel.OnSettingsChanged);
+            //Messenger.Default.Register<StatusMessage>(this.MainViewModel, this.MainViewModel.OnStatusChanged);
+            //Messenger.Default.Register<SettingsChangedMessage>(this.SettingsViewModel, this.SettingsViewModel.OnSettingsChanged);
+            //Messenger.Default.Register<CountryChangedMessage>(this.CitiesViewModel, this.CitiesViewModel.OnCountryChanged);
+            //Messenger.Default.Register<CountryChangedMessage>(this.CountriesViewModel, this.CountriesViewModel.OnCountryChanged);
         }
 
         public MainViewModel MainViewModel

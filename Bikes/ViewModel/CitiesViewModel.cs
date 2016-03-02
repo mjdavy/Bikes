@@ -69,7 +69,7 @@ namespace Bikes.ViewModel
             this.CitySource = new ObservableCollection<City>(Cities.AllCities.Values);
             this.SortByCityName();
             this.SelectedCity = Cities.CurrentCity;
-            this.SelectedCountry = SelectedCity.Country;
+            this.SelectedCountry = this.SelectedCity == null ? null : SelectedCity.Country;
         }
 
         bool FilterCountries(City filterCity)
