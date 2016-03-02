@@ -12,7 +12,7 @@ namespace Bikes.View
 
         private void ApplicationBarDoneClick(object sender, EventArgs e)
         {
-            this.NavigationService.GoBack();
+            // FIXME this.NavigationService.GoBack();
         }
     }
 }

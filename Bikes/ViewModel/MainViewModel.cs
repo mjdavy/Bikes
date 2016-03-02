@@ -252,14 +252,6 @@ namespace Bikes.ViewModel
              this.IsMyLocationVisible = Visibility.Visible;
         }
 
-        private Station SelectedStation
-        {
-            get
-            {
-                return this.StationSource.View.CurrentItem as Station;
-            }
-        }
-
         private void SelectNearestStationWithAvailableBike()
         {
             this.SelectNearestStationWithAvailablilty((Station s) => s.BikeCount > 0);
@@ -297,7 +289,7 @@ namespace Bikes.ViewModel
         {
             DispatcherHelper.CheckBeginInvokeOnUI(() =>
                 {
-                    Station selected = this.SelectedStation;
+                    Station selected = this.CurrentStation;
 
                     foreach (var station in data.Stations)
                     {

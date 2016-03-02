@@ -46,7 +46,7 @@ namespace Bikes.View
                         "Header",
                         typeof(object),
                         typeof(HeaderedContentControl),
-                        new PropertyMetadata(OnHeaderPropertyChanged));
+                        new PropertyMetadata(null, OnHeaderPropertyChanged));
 
         /// <summary>
         /// HeaderProperty property changed handler.
@@ -90,7 +90,7 @@ namespace Bikes.View
                         "HeaderTemplate",
                         typeof(DataTemplate),
                         typeof(HeaderedContentControl),
-                        new PropertyMetadata(OnHeaderTemplatePropertyChanged));
+                        new PropertyMetadata(null,OnHeaderTemplatePropertyChanged));
 
         /// <summary>
         /// HeaderTemplateProperty property changed handler.

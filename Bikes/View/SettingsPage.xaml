@@ -5,6 +5,7 @@
     xmlns:local="using:Bikes"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vw="using:Bikes.View"
     mc:Ignorable="d"
     DataContext="{Binding Source={StaticResource Locator}, Path=SettingsViewModel}"
     >
@@ -58,7 +59,7 @@
 
         <!--ContentPanel - place additional content here-->
         <StackPanel x:Name="ContentPanel" Grid.Row="1" Margin="12,0,12,0">
-            <tk:ToggleSwitch Header="Use Nearest City"  IsChecked="{Binding DefaultToNearestCity, Mode=TwoWay}" />
+            <ToggleSwitch Header="Use Nearest City" IsOn="{Binding DefaultToNearestCity, Mode=TwoWay}" />
             <Grid>
                 <TextBlock Margin="0,0,39,0" HorizontalAlignment="Right" VerticalAlignment="Center" Text="{Binding SelectedCity.Name}" Style="{StaticResource PhoneTextNormalStyle}"  />
                 <HyperlinkButton NavigateUri="/View/CitiesPage.xaml" Style="{StaticResource HyperlinkEmptyStyle}" >
@@ -68,14 +69,14 @@
                                    />
                 </HyperlinkButton>
             </Grid>
-            <tk:ListPicker Header="Map Mode" ItemsSource="{Binding MapModes}" SelectedItem="{Binding MapMode, Mode=TwoWay}" />
+            <ComboBox Header="Map Mode" ItemsSource="{Binding MapModes}" SelectedItem="{Binding MapMode, Mode=TwoWay}" />
         </StackPanel>
     </Grid>
 
-    <phone:PhoneApplicationPage.ApplicationBar>
+    <!--<phone:PhoneApplicationPage.ApplicationBar>
         <shell:ApplicationBar IsVisible="True" IsMenuEnabled="True">
             <shell:ApplicationBarIconButton IconUri="/Images/appbar.check.rest.png" Text="Done" Click="ApplicationBarDoneClick"/>
         </shell:ApplicationBar>
-    </phone:PhoneApplicationPage.ApplicationBar>
+    </phone:PhoneApplicationPage.ApplicationBar>-->
 
 </Page>
