@@ -1,0 +1,116 @@
+﻿<Page 
+    x:Class="Bikes.MainPage"
+     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:local="using:Bikes"
+    xmlns:vw="using:Bikes.View"
+    xmlns:maps="using:Windows.UI.Xaml.Controls.Maps"
+    mc:Ignorable="d"
+    DataContext="{Binding Source={StaticResource Locator}, Path=MainViewModel}"
+    Loaded="Page_Loaded"    
+    >
+    <Page.Resources>
+        <vw:StationAvailableConverter x:Key="StationAvailableConverter"/>
+        <Style TargetType="ContentControl" x:Key="MyPushpinStyle">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ContentControl">
+                        <Ellipse Name="MyEllipse" Fill="Blue" Stroke="Black" StrokeThickness="2" Width="20" Height="20" />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Background" Value="Black" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="FontSize" Value="18" />
+        </Style>
+        <Style TargetType="ContentControl" x:Key="StationPushpinStyle">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ContentControl">
+                        <Grid x:Name="ContentGrid" HorizontalAlignment="Center" VerticalAlignment="Bottom">
+                            <StackPanel Orientation="Vertical">
+                                <Border Name="Details" Background="Black" Opacity="0.75" CornerRadius="4" Margin="0,0,0,2" Visibility="{Binding DetailsVisibility}">
+                                    <StackPanel Margin="8">
+                                        <TextBlock Foreground="White" FontWeight="Bold" Text="{Binding Name}" />
+                                        <TextBlock Foreground="White" Text="{Binding StationInfo}" />
+                                    </StackPanel>
+                                </Border>
+                                <Canvas Name="Pin" Width="28" Height="54" VerticalAlignment="Bottom">
+                                    <Ellipse Stroke="Black" StrokeThickness="4" Width="28" Height="28" Fill="{Binding NoBikesOrDocks, Converter={StaticResource StationAvailableConverter}}"/>
+                                    <Path Fill="Red" Margin="4">
+                                        <Path.Data>
+                                            <PathGeometry>
+                                                <PathGeometry.Figures>
+                                                    <PathFigure StartPoint="10,10">
+                                                        <PathFigure.Segments>
+                                                            <LineSegment Point="10,0"></LineSegment>
+                                                            <ArcSegment Point="{Binding PieArc}" IsLargeArc="{Binding IsPieSliceLarge}" SweepDirection="Clockwise" Size="10,10"  />
+                                                            <LineSegment Point="10,10"></LineSegment>
+                                                        </PathFigure.Segments>
+                                                    </PathFigure>
+                                                </PathGeometry.Figures>
+                                            </PathGeometry>
+                                        </Path.Data>
+                                    </Path>
+                                    <Path Width="16" 
+                                        Height="27" Canvas.Left="6" 
+                                        Canvas.Top="24" Stretch="Fill" 
+                                        StrokeThickness="3" StrokeLineJoin="Round" 
+                                        Stroke="Black" Fill="Black" 
+                                        Data="F1 M 35,41L 23,81L 11,41"/>
+                                </Canvas>
+                            </StackPanel>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Background" Value="Black" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="FontSize" Value="18" />
+        </Style>
+    </Page.Resources>
+
+    <!--LayoutRoot is the root grid where all page content is placed-->
+   
+    <Grid x:Name="LayoutRoot" Background="Transparent">
+        <maps:MapControl 
+            Name="myMap" 
+            ZoomLevel="{Binding MapZoomLevel}"
+            Center="{Binding MapCenter, Mode=TwoWay}"
+            Style="{Binding MapMode, Mode=TwoWay}" 
+            MapTapped="myMap_MapTapped"
+            LandmarksVisible="true" 
+            PedestrianFeaturesVisible="true" 
+            MapServiceToken="Bqr3ptFFC6wvBto75oiT~phnhTlT9Nxa1iX3_MzdPOg~Agd5-npvieeZDQ1fPuv-cDTNb_nKFNv1bEDWv7WxJMKSC4ieGrsu20gZNVMaZU8Q">
+            <maps:MapItemsControl x:Name="MapItems" ItemsSource="{Binding StationSource}">
+                <maps:MapItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <ContentControl Style="{StaticResource StationPushpinStyle}" maps:MapControl.Location="{Binding Location}" Content="{Binding Name}" Tapped="Station_Tapped"/>
+                    </DataTemplate>
+                </maps:MapItemsControl.ItemTemplate>
+            </maps:MapItemsControl>
+        </maps:MapControl>
+    </Grid>
+
+    <!--<shell:SystemTray.ProgressIndicator>
+        <shell:ProgressIndicator IsIndeterminate="{Binding IsUpdating}" IsVisible="True" Text="{Binding CurrentStatus}" />
+    </shell:SystemTray.ProgressIndicator>-->
+
+
+    <!-- ApplicationBar-->
+    <Page.BottomAppBar>
+        <CommandBar>
+            <AppBarButton Name="MyLocation" Label="My Location" Command="{Binding FindMeCommand}" Icon="Map" />
+            <AppBarButton Name="NearestBike" Label="Nearest Bike" Command="{Binding FindNearestBikeCommand}">
+                <AppBarButton.Icon>
+                    <BitmapIcon UriSource="ms-appx:///Assets/BicycleWhite.png"/>
+                </AppBarButton.Icon>
+            </AppBarButton>
+            <AppBarButton Name="NearestDock" Label="Nearest Dock" Command="{Binding FindNearestDockCommand}" Icon="Home"/>
+            <AppBarButton Name="StationList" Label="Station List" Command="{Binding FindNearestDockCommand}" Icon="List" />
+            <AppBarButton Name="Settings" Label="Settings" Icon="Setting" />
+        </CommandBar>
+    </Page.BottomAppBar>
+</Page>
