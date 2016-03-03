@@ -173,7 +173,11 @@ namespace Bikes.Model
             //  Default if we are unable to determine current city
             if (CurrentCity == null)
             {
-                CurrentCity = currentCity = Cities.AllCities["London"];
+                var defaultCity = "Boston";
+                if (Cities.AllCities.ContainsKey(defaultCity))
+                {
+                    CurrentCity = currentCity = Cities.AllCities[defaultCity];
+                }
             }
 
             Countries.CurrentCountry = CurrentCity == null ? null : CurrentCity.Country;

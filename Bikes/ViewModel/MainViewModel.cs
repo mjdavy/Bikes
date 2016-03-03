@@ -24,7 +24,7 @@ namespace Bikes.ViewModel
         private Geolocator geolocator = null;
         private StationLoader stationLoader = new StationLoader();
         private BasicGeoposition myLocation;
-        private BasicGeoposition mapCenter;
+        private Geopoint mapCenter;
         private DispatcherTimer timer = new DispatcherTimer();
         private bool disposed = false;
         private bool isUpdating;
@@ -153,7 +153,7 @@ namespace Bikes.ViewModel
             }
         }
 
-        public BasicGeoposition MapCenter
+        public Geopoint MapCenter
         {
             get
             {
@@ -251,7 +251,7 @@ namespace Bikes.ViewModel
 
         private void CenterMapToMyLocation()
         {
-             this.MapCenter = this.MyLocation;
+             this.MapCenter = new Geopoint(this.MyLocation);
              this.IsMyLocationVisible = Visibility.Visible;
         }
 
@@ -284,7 +284,7 @@ namespace Bikes.ViewModel
 
             if (nearestStation != null)
             {
-                this.MapCenter = nearestStation.Location;
+                this.MapCenter = new Geopoint(nearestStation.Location);
             }
         }
 
