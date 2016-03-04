@@ -12,7 +12,7 @@ namespace Bikes.Model
         private const int pieRadius = 10;
 
         private string name;
-        private BasicGeoposition location;
+        private Geopoint location;
         private int bikeCount;
         private int emptyDockCount;
         private Point pieArc;
@@ -37,7 +37,7 @@ namespace Bikes.Model
             station.emptyDockCount = emptyDockCount;
             station.locked = locked;
             station.installed = installed;
-            station.location = location;
+            station.location = new Geopoint(location);
 
             station.CalcPieArc(bikeCount, emptyDockCount);
             station.DetermineAvailability();
@@ -72,7 +72,7 @@ namespace Bikes.Model
                 this.Name = other.Name;
             }
 
-            if (!GeoUtil.AreEqual(this.Location, other.Location))
+            if (!GeoUtil.AreEqual(this.Location.Position, other.Location.Position))
             {
                 this.Location = other.Location;
             }
@@ -130,7 +130,7 @@ namespace Bikes.Model
             }
         }
         
-        public BasicGeoposition Location
+        public Geopoint Location
         {
             get
             {

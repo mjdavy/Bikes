@@ -272,7 +272,7 @@ namespace Bikes.ViewModel
 
             foreach (var station in this.StationSource)
             {
-                double dist = GeoUtil.DistanceTo(myLocation,station.Location);
+                double dist = GeoUtil.DistanceTo(myLocation,station.Location.Position);
                 if (dist < minDist && condition(station))
                 {
                     nearestStation = station;
@@ -284,7 +284,7 @@ namespace Bikes.ViewModel
 
             if (nearestStation != null)
             {
-                this.MapCenter = new Geopoint(nearestStation.Location);
+                this.MapCenter = nearestStation.Location;
             }
         }
 
@@ -328,7 +328,7 @@ namespace Bikes.ViewModel
         {
             foreach (var station in this.StationSource)
             {
-                station.Distance = (int)(GeoUtil.DistanceTo(station.Location, this.myLocation) * 1000.0);
+                station.Distance = (int)(GeoUtil.DistanceTo(station.Location.Position, this.myLocation) * 1000.0);
             }
 
             this.StationSource.OrderBy(x => x.Distance);
@@ -347,7 +347,7 @@ namespace Bikes.ViewModel
                 return false;
             }
 
-            if (GeoUtil.DistanceTo(station.Location, myCity.Center) < 50000)
+            if (GeoUtil.DistanceTo(station.Location.Position, myCity.Center) < 50000)
             {
                 return true;
             }

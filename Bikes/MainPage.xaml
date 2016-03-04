@@ -87,7 +87,11 @@
             <maps:MapItemsControl x:Name="MapItems" ItemsSource="{Binding StationSource}">
                 <maps:MapItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <ContentControl Style="{StaticResource StationPushpinStyle}" maps:MapControl.Location="{Binding Location}" Content="{Binding Name}" Tapped="Station_Tapped"/>
+                        <ContentControl 
+                            Style="{StaticResource StationPushpinStyle}" 
+                            maps:MapControl.Location="{Binding Location}" 
+                            maps:MapControl.NormalizedAnchorPoint="{Binding Origin}"
+                            Content="{Binding Name}" Tapped="Station_Tapped"/>
                     </DataTemplate>
                 </maps:MapItemsControl.ItemTemplate>
             </maps:MapItemsControl>
