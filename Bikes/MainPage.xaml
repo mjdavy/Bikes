@@ -83,7 +83,9 @@
             MapTapped="myMap_MapTapped"
             LandmarksVisible="true" 
             PedestrianFeaturesVisible="true" 
-            MapServiceToken="Bqr3ptFFC6wvBto75oiT~phnhTlT9Nxa1iX3_MzdPOg~Agd5-npvieeZDQ1fPuv-cDTNb_nKFNv1bEDWv7WxJMKSC4ieGrsu20gZNVMaZU8Q">
+            MapServiceToken="Bqr3ptFFC6wvBto75oiT~phnhTlT9Nxa1iX3_MzdPOg~Agd5-npvieeZDQ1fPuv-cDTNb_nKFNv1bEDWv7WxJMKSC4ieGrsu20gZNVMaZU8Q"
+            >
+           
             <maps:MapItemsControl x:Name="MapItems" ItemsSource="{Binding StationSource}">
                 <maps:MapItemsControl.ItemTemplate>
                     <DataTemplate>

@@ -23,7 +23,7 @@ namespace Bikes.ViewModel
         private string currentStatus = string.Empty;
         private Geolocator geolocator = null;
         private StationLoader stationLoader = new StationLoader();
-        private BasicGeoposition myLocation;
+        private Geopoint myLocation;
         private Geopoint mapCenter;
         private DispatcherTimer timer = new DispatcherTimer();
         private bool disposed = false;
@@ -128,7 +128,7 @@ namespace Bikes.ViewModel
             }
         }
 
-        public BasicGeoposition MyLocation
+        public Geopoint MyLocation
         {
             get
             {
@@ -176,7 +176,7 @@ namespace Bikes.ViewModel
 
             if (position != null)
             {
-                this.MyLocation = new BasicGeoposition { Latitude = position.Coordinate.Latitude, Longitude = position.Coordinate.Longitude };
+                this.MyLocation = new Geopoint(new BasicGeoposition { Latitude = position.Coordinate.Latitude, Longitude = position.Coordinate.Longitude });
                 this.CenterMapToMyLocation();
                 this.LoadStationDataAsync();
             }
@@ -251,7 +251,7 @@ namespace Bikes.ViewModel
 
         private void CenterMapToMyLocation()
         {
-             this.MapCenter = new Geopoint(this.MyLocation);
+             this.MapCenter = this.MyLocation;
              this.IsMyLocationVisible = Visibility.Visible;
         }
 
@@ -272,7 +272,7 @@ namespace Bikes.ViewModel
 
             foreach (var station in this.StationSource)
             {
-                double dist = GeoUtil.DistanceTo(myLocation,station.Location.Position);
+                double dist = GeoUtil.DistanceTo(myLocation.Position,station.Location.Position);
                 if (dist < minDist && condition(station))
                 {
                     nearestStation = station;
@@ -328,7 +328,7 @@ namespace Bikes.ViewModel
         {
             foreach (var station in this.StationSource)
             {
-                station.Distance = (int)(GeoUtil.DistanceTo(station.Location.Position, this.myLocation) * 1000.0);
+                station.Distance = (int)(GeoUtil.DistanceTo(station.Location.Position, this.myLocation.Position) * 1000.0);
             }
 
             this.StationSource.OrderBy(x => x.Distance);
@@ -401,7 +401,7 @@ namespace Bikes.ViewModel
 
         private void UpdateLocationData(Geoposition pos)
         {
-            this.MyLocation = new BasicGeoposition { Latitude = pos.Coordinate.Latitude, Longitude = pos.Coordinate.Longitude };
+            this.MyLocation = new Geopoint(new BasicGeoposition { Latitude = pos.Coordinate.Latitude, Longitude = pos.Coordinate.Longitude });
         }
 
         private void Geolocator_StatusChanged(Geolocator sender, StatusChangedEventArgs args)

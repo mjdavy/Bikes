@@ -1,5 +1,6 @@
 ﻿using Bikes.Model;
 using Bikes.ViewModel;
+using GalaSoft.MvvmLight.Views;
 using System;
 using Windows.Devices.Geolocation;
 using Windows.UI.Xaml.Controls;
