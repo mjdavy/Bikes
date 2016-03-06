@@ -24,7 +24,7 @@ namespace Bikes.View
         {
             if (allow)
             {
-               // FIXME this.NavigationService.GoBack();
+               this.Frame.GoBack();
             }
             else
             {

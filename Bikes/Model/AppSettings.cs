@@ -74,7 +74,7 @@ namespace Bikes.Model
             }
             set
             {
-                AddOrUpdateValue(MapModeSetting, value);
+                AddOrUpdateValue(MapModeSetting, (int)value);
             }
         }
 

@@ -28,7 +28,7 @@ namespace Bikes.View
         {
             var vm = this.DataContext as CitiesViewModel;
             vm.SetCurrentCity();
-            // FIXME this.NavigationService.GoBack();
+            this.Frame.GoBack();
         }
     }
 }

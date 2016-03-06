@@ -12,7 +12,12 @@ namespace Bikes.View
 
         private void ApplicationBarDoneClick(object sender, EventArgs e)
         {
-            // FIXME this.NavigationService.GoBack();
+            this.Frame.GoBack();
+        }
+
+        private void CityButton_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            this.Frame.Navigate(typeof(CitiesPage));
         }
     }
 }

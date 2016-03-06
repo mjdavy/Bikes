@@ -1,6 +1,6 @@
 ﻿<Page 
     x:Class="Bikes.View.StationsPage"
-   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Bikes"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -16,38 +16,21 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!--TitlePanel contains the name of the application and page title-->
-        <StackPanel x:Name="TitlePanel" Grid.Row="0" Margin="12,17,0,28">
-            <TextBlock x:Name="ApplicationTitle" Text="Bikes" Style="{StaticResource PhoneTextNormalStyle}"/>
-            <TextBlock x:Name="PageTitle" Text="Bike Stations" Margin="9,-7,0,0" Style="{StaticResource PhoneTextTitle1Style}"/>
-        </StackPanel>
+        <TextBlock x:Name="PageTitle" Text="Bike Stations" />
 
         <!--ContentPanel - place additional content here-->
         <Grid x:Name="ContentPanel" Grid.Row="1" Margin="12,0,12,0">
-            <ListBox ItemsSource="{Binding StationSource.View}">
+            <ListBox ItemsSource="{Binding StationSource}" SelectedItem="{Binding CurrentStation, Mode=TwoWay}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Margin="8">
-                            <TextBlock Foreground="White" FontWeight="Bold" Text="{Binding Name}" />
-                            <TextBlock Foreground="White" Text="{Binding StationInfo}" />
-                            <TextBlock Foreground="White" Text="{Binding DistanceInfo}" Visibility="{Binding DistanceVisibility}" />
+                            <TextBlock FontWeight="Bold" Text="{Binding Name}" />
+                            <TextBlock Text="{Binding StationInfo}" />
+                            <TextBlock Text="{Binding DistanceInfo}" />
                         </StackPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
         </Grid>
     </Grid>
- 
-    <!--Sample code showing usage of ApplicationBar-->
-    <!--<phone:PhoneApplicationPage.ApplicationBar>
-        <shell:ApplicationBar IsVisible="True" IsMenuEnabled="True">
-            <shell:ApplicationBarIconButton IconUri="/Images/appbar_button1.png" Text="Button 1"/>
-            <shell:ApplicationBarIconButton IconUri="/Images/appbar_button2.png" Text="Button 2"/>
-            <shell:ApplicationBar.MenuItems>
-                <shell:ApplicationBarMenuItem Text="MenuItem 1"/>
-                <shell:ApplicationBarMenuItem Text="MenuItem 2"/>
-            </shell:ApplicationBar.MenuItems>
-        </shell:ApplicationBar>
-    </phone:PhoneApplicationPage.ApplicationBar>-->
-
 </Page>

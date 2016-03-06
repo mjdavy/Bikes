@@ -188,6 +188,8 @@ namespace Bikes.ViewModel
             {
                 this.timer.Stop();
                 this.SetLoadingStatus(true, "Updating Bike Stations.");
+                // MJDTODO - update to use new network loader;
+                //var networks = await this.stationLoader.LoadNetworksAsync();
                 var stationData = await this.stationLoader.LoadDataAsync(Cities.CurrentCity);
                 this.UpdateStations(stationData);
                 this.timer.Start();
@@ -331,7 +333,8 @@ namespace Bikes.ViewModel
                 station.Distance = (int)(GeoUtil.DistanceTo(station.Location.Position, this.myLocation.Position) * 1000.0);
             }
 
-            this.StationSource.OrderBy(x => x.Distance);
+            var ordered = this.StationSource.OrderBy(x => x.Distance);
+            this.StationSource = new ObservableCollection<Station>(ordered);
         }
 
         private bool StationSourceFilter(Station station)

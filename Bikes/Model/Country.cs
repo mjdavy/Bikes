@@ -21,7 +21,7 @@ namespace Bikes.Model
         {
             get
             {
-                var imagePath = string.Format("/Images/{0}.png", Name);
+                var imagePath = string.Format("/Flags/{0}.png", Name);
                 return imagePath;
             }
         }

@@ -16,11 +16,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!--TitlePanel contains the name of the application and page title-->
-        <StackPanel x:Name="TitlePanel" Grid.Row="0" Margin="12,17,0,10">
-            <TextBlock x:Name="ApplicationTitle" Text="Bikes" Style="{StaticResource PhoneTextNormalStyle}"/>
-            <TextBlock x:Name="PageTitle" Text="Choose City" Margin="9,0,0,0" Style="{StaticResource PhoneTextTitle1Style}" FontSize="56"/>
-        </StackPanel>
+        <TextBlock x:Name="PageTitle" Text="Choose City" Margin="9,0,0,0" FontSize="56"/>
 
         <!--ContentPanel - place additional content here-->
         <Grid x:Name="ContentPanel" Grid.Row="1" Margin="12,0,12,0">
@@ -31,7 +27,14 @@
             <HyperlinkButton NavigateUri="/View/CountriesPage.xaml" Grid.Row="0" HorizontalAlignment="Left" Margin="0,0,0,20" >
                 Country
             </HyperlinkButton>
-            <ListBox ItemsSource="{Binding CitySource.View, Mode=TwoWay}" SelectedItem="{Binding SelectedCity}" SelectionMode="Single" FontSize="32" SelectionChanged="ListBox_SelectionChanged" Tapped="ListBox_Tapped" ScrollViewer.HorizontalScrollBarVisibility="Auto" Grid.Row="1" >
+            <ListBox 
+                ItemsSource="{Binding CitySource, Mode=TwoWay}" 
+                SelectedItem="{Binding SelectedCity}" 
+                SelectionMode="Single" FontSize="32" 
+                SelectionChanged="ListBox_SelectionChanged" 
+                Tapped="ListBox_Tapped" 
+                ScrollViewer.HorizontalScrollBarVisibility="Auto" 
+                Grid.Row="1" >
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">

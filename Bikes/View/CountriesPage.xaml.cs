@@ -38,7 +38,7 @@ namespace Bikes.View
             };
 
             Messenger.Default.Send<CountryChangedMessage>(msg);
-           // FIXME this.NavigationService.GoBack();
+            this.Frame.GoBack();
         }
 
         // Sample code for building a localized ApplicationBar

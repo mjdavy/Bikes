@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Net.Http;
+using Newtonsoft.Json;
 
 namespace Bikes.Model
 {
@@ -20,6 +21,26 @@ namespace Bikes.Model
         public void RegisterParser(City.VendorType vendor, IStationDataParser parser)
         {
             parserMap[vendor] = parser;
+        }
+
+        public async Task<BikeShareNetworks> LoadNetworksAsync()
+        {
+            var client = new HttpClient();
+            client.DefaultRequestHeaders.Add("user-agent", "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; WOW64; Trident/6.0)");
+            BikeShareNetworks networks = new BikeShareNetworks();
+
+            try
+            {
+                var networksJson = await client.GetStringAsync("http://api.citybik.es/v2/networks");
+
+                networks =  await Task.Factory.StartNew(() => JsonConvert.DeserializeObject<BikeShareNetworks>(networksJson));
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+
+            return networks;
         }
 
         public async Task<StationData> LoadDataAsync(City myCity)

@@ -115,8 +115,8 @@
                 </AppBarButton.Icon>
             </AppBarButton>
             <AppBarButton Name="NearestDock" Label="Nearest Dock" Command="{Binding FindNearestDockCommand}" Icon="Home"/>
-            <AppBarButton Name="StationList" Label="Station List" Command="{Binding FindNearestDockCommand}" Icon="List" />
-            <AppBarButton Name="Settings" Label="Settings" Icon="Setting" />
+            <AppBarButton Name="StationList" Label="Station List" Click="StationList_Click" Icon="List" />
+            <AppBarButton Name="Settings" Label="Settings" Click="Settings_Click" Icon="Setting" />
         </CommandBar>
     </Page.BottomAppBar>
 </Page>

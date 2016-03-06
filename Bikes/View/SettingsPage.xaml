@@ -12,71 +12,22 @@
     
     <!--LayoutRoot is the root grid where all page content is placed-->
     <Grid x:Name="LayoutRoot" Background="Transparent">
-        <Grid.Resources>
-            <Style x:Key="HyperlinkEmptyStyle" TargetType="HyperlinkButton">
-                <Setter Property="HorizontalContentAlignment" Value="Left"/>
-                <Setter Property="HorizontalAlignment" Value="Stretch"/>
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate TargetType="HyperlinkButton">
-                            <ContentPresenter/>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Style>
-            <Style x:Key="MultilineHyperlinkStyle" TargetType="vw:HeaderedContentControl">
-                <Setter Property="HorizontalAlignment" Value="Stretch"/>
-                <Setter Property="HorizontalContentAlignment" Value="Left"/>
-                <Setter Property="Margin" Value="0,0,0,24"/>
-                <Setter Property="HeaderTemplate">
-                    <Setter.Value>
-                        <DataTemplate>
-                            <TextBlock Style="{StaticResource PhoneTextLargeStyle}"
-                                   Text="{Binding}"/>
-                        </DataTemplate>
-                    </Setter.Value>
-                </Setter>
-                <Setter Property="ContentTemplate">
-                    <Setter.Value>
-                        <DataTemplate>
-                            <TextBlock Style="{StaticResource PhoneTextNormalStyle}"
-                                   Text="{Binding}"/>
-                        </DataTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Style>
-        </Grid.Resources>
+       
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!--TitlePanel contains the name of the application and page title-->
-        <StackPanel x:Name="TitlePanel" Grid.Row="0" Margin="12,17,0,28">
-            <TextBlock x:Name="ApplicationTitle" Text="Bikes" Style="{StaticResource PhoneTextNormalStyle}"/>
-            <TextBlock x:Name="PageName" Text="Settings" Margin="9,-7,0,0" Style="{StaticResource PhoneTextTitle1Style}"/>
-        </StackPanel>
+
+        <TextBlock x:Name="PageName" Text="Settings"/>
 
         <!--ContentPanel - place additional content here-->
         <StackPanel x:Name="ContentPanel" Grid.Row="1" Margin="12,0,12,0">
-            <ToggleSwitch Header="Use Nearest City" IsOn="{Binding DefaultToNearestCity, Mode=TwoWay}" />
-            <Grid>
-                <TextBlock Margin="0,0,39,0" HorizontalAlignment="Right" VerticalAlignment="Center" Text="{Binding SelectedCity.Name}" Style="{StaticResource PhoneTextNormalStyle}"  />
-                <HyperlinkButton NavigateUri="/View/CitiesPage.xaml" Style="{StaticResource HyperlinkEmptyStyle}" >
-                    <vw:HeaderedContentControl
-                                    Style="{StaticResource MultilineHyperlinkStyle}"
-                                    Header="City"
-                                   />
-                </HyperlinkButton>
-            </Grid>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+                <ToggleSwitch Header="Use Nearest City" IsOn="{Binding DefaultToNearestCity, Mode=TwoWay}" />
+                <HyperlinkButton Content="{Binding SelectedCity.Name}" Click="CityButton_Click" HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
+            </StackPanel>
             <ComboBox Header="Map Mode" ItemsSource="{Binding MapModes}" SelectedItem="{Binding MapMode, Mode=TwoWay}" />
         </StackPanel>
     </Grid>
-
-    <!--<phone:PhoneApplicationPage.ApplicationBar>
-        <shell:ApplicationBar IsVisible="True" IsMenuEnabled="True">
-            <shell:ApplicationBarIconButton IconUri="/Images/appbar.check.rest.png" Text="Done" Click="ApplicationBarDoneClick"/>
-        </shell:ApplicationBar>
-    </phone:PhoneApplicationPage.ApplicationBar>-->
-
 </Page>
