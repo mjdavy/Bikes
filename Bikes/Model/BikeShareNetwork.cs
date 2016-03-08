@@ -36,5 +36,12 @@ namespace Bikes.Model
             get;
             set;
         }
+
+        [JsonProperty("stations")]
+        public BikeShareStations Stations
+        {
+            get;
+            set;
+        }
     }
 }

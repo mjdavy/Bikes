@@ -172,14 +172,14 @@ namespace Bikes.ViewModel
         {
             await this.InitializeGeoLocator();
             await Cities.InitializeAsync();
-            var position = await Cities.FindMyLocationAsync();
+           // FIXME var position = await Cities.FindMyLocationAsync();
 
-            if (position != null)
-            {
-                this.MyLocation = new Geopoint(new BasicGeoposition { Latitude = position.Coordinate.Latitude, Longitude = position.Coordinate.Longitude });
-                this.CenterMapToMyLocation();
-                this.LoadStationDataAsync();
-            }
+            //if (position != null)
+            //{
+            //    this.MyLocation = new Geopoint(new BasicGeoposition { Latitude = position.Coordinate.Latitude, Longitude = position.Coordinate.Longitude });
+            //    this.CenterMapToMyLocation();
+            //    this.LoadStationDataAsync();
+            //}
         }
 
         public async void LoadStationDataAsync()

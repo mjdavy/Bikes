@@ -87,7 +87,8 @@ namespace Bikes.ViewModel
                 this.DefaultToNearestCity = false;
             }
 
-            await Cities.DetermineCurrentCityAsync();
+            // FIXME
+            //await Cities.DetermineCurrentCityAsync();
             this.SelectedCity = Cities.CurrentCity;
             
             var countryChangedMsg = new CountryChangedMessage()

@@ -122,71 +122,12 @@ namespace Bikes.Model
 
         }
 
-        public static async Task<Geoposition> FindMyLocationAsync()
-        {
-            Geolocator geolocator = new Geolocator();
-            geolocator.DesiredAccuracyInMeters = 50;
-
-            try
-            {
-                var pos = await geolocator.GetGeopositionAsync(
-                    maximumAge: TimeSpan.FromMinutes(5),
-                    timeout: TimeSpan.FromSeconds(10)
-                    );
-
-                return pos;
-            }
-            catch (Exception ex)
-            {
-                if ((uint)ex.HResult == 0x80004004)
-                {
-                    // the application does not have the right capability or the location master switch is off
-                    Messenger.Default.Send<StatusMessage>(new StatusMessage("location service is disabled in phone settings."));
-                }
-                else
-                {
-                    Messenger.Default.Send<StatusMessage>(new StatusMessage("Error: unable to determine your location."));
-                }
-            }
-
-            return null; // FIXME
-
-        }
-
-        internal static async Task DetermineCurrentCityAsync()
-        {
-            if (AppSettings.Instance.DefaultToNearestCity)
-            {
-                var location = await FindMyLocationAsync();
-
-                if (location != null)
-                {
-                    var position = new BasicGeoposition { Latitude = location.Coordinate.Latitude, Longitude = location.Coordinate.Longitude };
-                    CurrentCity = FindMyCity(position);
-                }
-            }
-            else
-            {
-                LoadCurrentCity();
-            }
-
-            //  Default if we are unable to determine current city
-            if (CurrentCity == null)
-            {
-                var defaultCity = "Boston";
-                if (Cities.AllCities.ContainsKey(defaultCity))
-                {
-                    CurrentCity = currentCity = Cities.AllCities[defaultCity];
-                }
-            }
-
-            Countries.CurrentCountry = CurrentCity == null ? null : CurrentCity.Country;
-        }
-
+       
         internal static async Task InitializeAsync()
         {
             LoadCities();
-            await DetermineCurrentCityAsync();
+            // FIXME
+            //await DetermineCurrentCityAsync();
         }
 
     }

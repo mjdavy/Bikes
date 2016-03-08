@@ -32,7 +32,6 @@ namespace Bikes.Model
             try
             {
                 var networksJson = await client.GetStringAsync("http://api.citybik.es/v2/networks");
-
                 networks =  await Task.Factory.StartNew(() => JsonConvert.DeserializeObject<BikeShareNetworks>(networksJson));
             }
             catch (Exception ex)

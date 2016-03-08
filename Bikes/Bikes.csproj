@@ -112,6 +112,8 @@
     <Compile Include="Model\BikeShareNetwork.cs" />
     <Compile Include="Model\BikeShareLocation.cs" />
     <Compile Include="Model\BikeShareNetworks.cs" />
+    <Compile Include="Model\BikeShareStation.cs" />
+    <Compile Include="Model\BikeShareStations.cs" />
     <Compile Include="Model\Cities.cs" />
     <Compile Include="Model\City.cs" />
     <Compile Include="Model\CityBikesNetwork.cs" />
