@@ -4,13 +4,13 @@ using GalaSoft.MvvmLight;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.Devices.Geolocation;
+using Bikes.Model;
 
-namespace Bikes.Model
+namespace Bikes.ViewModel
 {
-    public class Station : ObservableObject, IEquatable<Station>
+    public class StationViewModel : ObservableObject
     {
         private const int pieRadius = 10;
-
         private string name;
         private Geopoint location;
         private int bikeCount;
@@ -19,33 +19,51 @@ namespace Bikes.Model
         private bool isPieSliceLarge;
         private Visibility detailsVisibility = Visibility.Collapsed;
         private bool noBikesOrDocks;
-        private bool installed;
-        private bool locked;
         private int distance;
+ 
 
-        private Station()
+        private StationViewModel()
         {
         }
 
-        public static Station Create(int id, string name, int bikeCount, int emptyDockCount, bool installed, bool locked, BasicGeoposition location)
+        public static StationViewModel Create(BikeShareStation bikeShareStation)
         {
-            var station = new Station();
+            var vm = new StationViewModel();
 
-            station.Id = id;
-            station.name = name;
-            station.bikeCount = bikeCount;
-            station.emptyDockCount = emptyDockCount;
-            station.locked = locked;
-            station.installed = installed;
-            station.location = new Geopoint(location);
+            vm.Id = bikeShareStation.Id;
+            vm.name = bikeShareStation.Extra.Name;
+            vm.bikeCount = bikeShareStation.FreeBikes;
+            vm.emptyDockCount = bikeShareStation.EmptySlots;
+            vm.Locked = bikeShareStation.Extra.Locked;
+            vm.Installed = bikeShareStation.Extra.Installed;
+            vm.location = new Geopoint(
+                new BasicGeoposition { Latitude = bikeShareStation.Latitude, Longitude = bikeShareStation.Latitude });
 
-            station.CalcPieArc(bikeCount, emptyDockCount);
-            station.DetermineAvailability();
+            vm.CalcPieArc(vm.BikeCount, vm.EmptyDockCount);
+            vm.DetermineAvailability();
 
-            return station;
+            return vm;
         }
 
-        public void Update(Station other)
+        public Guid Id
+        {
+            get;
+            set;
+        }
+
+        public bool Locked
+        {
+            get;
+            set;
+        }
+
+        public bool Installed
+        {
+            get;
+            set;
+        }
+
+        public void Update(StationViewModel other)
         {
             if (this.Id != other.Id)
             {
@@ -67,25 +85,15 @@ namespace Bikes.Model
                 recalcPie = true;
             }
 
-            if (this.Name != other.Name)
+            if (this.Locked != other.Locked)
             {
-                this.Name = other.Name;
-            }
-
-            if (!GeoUtil.AreEqual(this.Location.Position, other.Location.Position))
-            {
-                this.Location = other.Location;
-            }
-
-            if (this.locked != other.locked)
-            {
-                this.locked = other.locked;
+                this.Locked = other.Locked;
                 recalcPie = true;
             }
 
-            if (this.installed != other.installed)
+            if (this.Installed != other.Installed)
             {
-                this.installed = other.installed;
+                this.Installed = other.Installed;
                 recalcPie = true;
             }
 
@@ -96,26 +104,6 @@ namespace Bikes.Model
             }
         }
 
-        public bool Equals(Station other)
-        {
-            if (other == null)
-            {
-                return false;
-            }
-
-            return this.Id == other.Id;
-        }
-
-        public override int GetHashCode()
-        {
-            return this.Id.GetHashCode();
-        }
-
-        public int Id
-        {
-            get;
-            private set;
-        }
 
         public string Name
         {
@@ -265,7 +253,7 @@ namespace Bikes.Model
             double total = bikes + docks;
             double fullAngle = total > 0 ? (bikes / total) * 360 : 0;
 
-            if (this.locked)
+            if (this.Locked)
             {
                 fullAngle = 0;
             }
@@ -285,7 +273,7 @@ namespace Bikes.Model
 
         private void DetermineAvailability()
         {
-            this.NoBikesOrDocks = (this.locked == true || this.installed == false || (this.BikeCount == 0 && this.EmptyDockCount == 0));
+            this.NoBikesOrDocks = (this.Locked == true || this.Installed == false || (this.BikeCount == 0 && this.EmptyDockCount == 0));
         }
     }
 }

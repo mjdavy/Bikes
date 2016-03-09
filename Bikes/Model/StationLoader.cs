@@ -9,80 +9,52 @@ namespace Bikes.Model
 {
     public class StationLoader
     {
-        private Dictionary<City.VendorType, IStationDataParser> parserMap;
+        const string userAgent = "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; WOW64; Trident/6.0)";
+        Uri baseUri = new Uri("http://api.citybik.es/");
 
         public StationLoader()
         {
-            parserMap = new Dictionary<City.VendorType, IStationDataParser>();
-            this.RegisterParser(City.VendorType.CityBikes, new CityBikesParser());
-            this.RegisterParser(City.VendorType.NextBike, new NextBikeParser());
         }
 
-        public void RegisterParser(City.VendorType vendor, IStationDataParser parser)
-        {
-            parserMap[vendor] = parser;
-        }
-
-        public async Task<BikeShareNetworks> LoadNetworksAsync()
+        public async Task<BikeShareNetworks> LoadBikeSharesAsync()
         {
             var client = new HttpClient();
-            client.DefaultRequestHeaders.Add("user-agent", "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; WOW64; Trident/6.0)");
-            BikeShareNetworks networks = new BikeShareNetworks();
+            client.DefaultRequestHeaders.Add("user-agent", userAgent);
+            var networks = new BikeShareNetworks();
 
             try
             {
-                var networksJson = await client.GetStringAsync("http://api.citybik.es/v2/networks");
+                var Uri = new Uri(baseUri, "/v2/networks");
+                var networksJson = await client.GetStringAsync(baseUri);
                 networks =  await Task.Factory.StartNew(() => JsonConvert.DeserializeObject<BikeShareNetworks>(networksJson));
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message);
+                Debug.WriteLine(ex.Message); // MJDTODO - error handling
             }
 
             return networks;
         }
 
-        public async Task<StationData> LoadDataAsync(City myCity)
+        public async Task<BikeShareNetwork> LoadBikeShareAsync(string networkEndPoint)
         {
             var client = new HttpClient();
-            client.DefaultRequestHeaders.Add("user-agent", "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; WOW64; Trident/6.0)");
-            
-            var stationData = new StationData();
+            client.DefaultRequestHeaders.Add("user-agent", userAgent);
+            var network = new BikeShareNetwork();
             
             try
             {
-                var rawStationData = await client.GetStringAsync(myCity.DataSource);
-                stationData = await ParseDataAsync(myCity, rawStationData);  
+                var endPoint = new Uri(baseUri, networkEndPoint);
+                var networkJson = await client.GetStringAsync(endPoint);
+                network = await Task.Factory.StartNew(() => JsonConvert.DeserializeObject<BikeShareNetwork>(networkJson));
             }
             catch (Exception ex)
-            {
-                stationData.Error("Error: Unable to load bike stations");
+            { 
                 Debug.WriteLine(ex.Message);
             }
 
-            return stationData;
+            return network;
         }
 
-        private async Task<StationData> ParseDataAsync(City myCity, string input)
-        {
-            return await Task.Run(() =>
-                {
-                    StationData data;
-
-                    if (string.IsNullOrEmpty(input))
-                    {
-                        data = new StationData();
-                        data.Error("No bike station data available.");
-
-                    }
-                    else
-                    {
-                        var parser = this.parserMap[myCity.Vendor];
-                        data = parser.Parse(input);
-                    }
-
-                    return data;
-                });
-        }
     }
 }

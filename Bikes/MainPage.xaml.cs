@@ -30,7 +30,7 @@ namespace Bikes
         private void Station_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
         {
             ContentControl stationPin = sender as ContentControl;
-            Station newStation = stationPin.DataContext as Station;
+            var newStation = stationPin.DataContext as StationViewModel;
             this.viewModel.SelectStation(newStation);
         }
 

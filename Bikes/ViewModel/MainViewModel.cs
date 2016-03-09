@@ -29,22 +29,18 @@ namespace Bikes.ViewModel
         private bool disposed = false;
         private bool isUpdating;
         private Visibility isMyLocationVisible;
-        private ObservableCollection<Station> _stationSource;
-        private Station _currentStation;
+        private ObservableCollection<StationViewModel> _stationSource;
+        private StationViewModel _currentStation;
 
         public MainViewModel()
         {
             this.InitializeCommands();
-            this.StationSource = new ObservableCollection<Station>();
+            this.StationSource = new ObservableCollection<StationViewModel>();
             this.timer.Interval = TimeSpan.FromMinutes(1.0);
             this.timer.Tick += Timer_Tick; 
             this.isMyLocationVisible = Visibility.Collapsed;
         }
 
-        private void Timer_Tick(object sender, object e)
-        {
-            this.LoadStationDataAsync();
-        }
 
         ~MainViewModel()
         {
@@ -57,7 +53,7 @@ namespace Bikes.ViewModel
         #region public properties
        
 
-        public ObservableCollection<Station> StationSource
+        public ObservableCollection<StationViewModel> StationSource
         {
             get
             {
@@ -69,7 +65,7 @@ namespace Bikes.ViewModel
             }
         }
 
-        public Station CurrentStation
+        public StationViewModel CurrentStation
         {
             get
             {
@@ -182,24 +178,7 @@ namespace Bikes.ViewModel
             //}
         }
 
-        public async void LoadStationDataAsync()
-        {
-            if (NetworkInterface.GetIsNetworkAvailable())
-            {
-                this.timer.Stop();
-                this.SetLoadingStatus(true, "Updating Bike Stations.");
-                // MJDTODO - update to use new network loader;
-                //var networks = await this.stationLoader.LoadNetworksAsync();
-                var stationData = await this.stationLoader.LoadDataAsync(Cities.CurrentCity);
-                this.UpdateStations(stationData);
-                this.timer.Start();
-            }
-            else 
-            {
-                this.SetLoadingStatus(false, "No Network Available.");
-            }
-           
-        }
+       
 
         #region commands
 
@@ -230,9 +209,9 @@ namespace Bikes.ViewModel
 
         #endregion
 
-        public void SelectStation(Station station)
+        public void SelectStation(StationViewModel station)
         {
-            Station oldStation = this.CurrentStation;
+            StationViewModel oldStation = this.CurrentStation;
             
             if (oldStation != null)
             {
@@ -251,6 +230,82 @@ namespace Bikes.ViewModel
             this.CurrentStation = station;
         }
 
+        public async Task LoadStationDataAsync()
+        {
+            if (NetworkInterface.GetIsNetworkAvailable())
+            {
+                var bikeShares = await this.stationLoader.LoadBikeSharesAsync();
+
+                // MJDTODO- Find city and bikeshare
+                
+                 await this.UpdateStationDataAsync();
+                
+            }
+            else
+            {
+                this.SetLoadingStatus(false, "No Network Available.");
+            }
+
+        }
+
+        public async Task UpdateStationDataAsync()
+        {
+            if (NetworkInterface.GetIsNetworkAvailable())
+            {
+                this.timer.Stop();
+                this.SetLoadingStatus(true, "Updating Bike Stations.");
+                var stationData = await this.stationLoader.LoadBikeShareAsync("/v2/networks/hubway"); // MJDTODO - remove hard code
+                var viewModels = await this.CreateViewModelsAsync(stationData.Stations);
+                this.UpdateViewModels(viewModels);
+                this.timer.Start();
+            }
+            else
+            {
+                this.SetLoadingStatus(false, "No Network Available.");
+            }
+        }
+
+        public async Task<IDictionary<Guid, StationViewModel>> CreateViewModelsAsync(BikeShareStations bikeShare)
+        {
+            var vmDict = new Dictionary<Guid, StationViewModel>();
+
+            await Task.Factory.StartNew(() =>
+            {
+                foreach(var station in bikeShare.Stations)
+                {
+                    var vm = StationViewModel.Create(station);
+                    vmDict.Add(station.Id, vm);
+                }
+            });
+            return vmDict;
+        }
+
+        private void UpdateViewModels(IDictionary<Guid, StationViewModel> updated)
+        {
+            DispatcherHelper.CheckBeginInvokeOnUI(() =>
+            {
+                var selected = this.CurrentStation;
+
+                foreach (var station in this.StationSource)
+                {
+                    var id = station.Id;
+                    if (updated.Keys.Contains(id))
+                    {
+                        station.Update(updated[id]);
+                        updated.Remove(id);
+                    }
+                }
+
+                foreach (var key in updated.Keys)
+                {
+                    this.StationSource.Add(updated[key]);
+                }
+
+                this.SelectStation(selected);
+               // this.SetLoadingStatus(false, data.LastUpdated); // FIXME
+            });
+        }
+
         private void CenterMapToMyLocation()
         {
              this.MapCenter = this.MyLocation;
@@ -259,18 +314,18 @@ namespace Bikes.ViewModel
 
         private void SelectNearestStationWithAvailableBike()
         {
-            this.SelectNearestStationWithAvailablilty((Station s) => s.BikeCount > 0);
+            this.SelectNearestStationWithAvailablilty((StationViewModel s) => s.BikeCount > 0);
         }
 
         private void SelectNearestStationWithAvailableDock()
         {
-            this.SelectNearestStationWithAvailablilty((Station s) => s.EmptyDockCount > 0);
+            this.SelectNearestStationWithAvailablilty((StationViewModel s) => s.EmptyDockCount > 0);
         }
 
-        private void SelectNearestStationWithAvailablilty(Predicate<Station> condition)
+        private void SelectNearestStationWithAvailablilty(Predicate<StationViewModel> condition)
         {
             double minDist = Double.MaxValue;
-            Station nearestStation = null;
+            StationViewModel nearestStation = null;
 
             foreach (var station in this.StationSource)
             {
@@ -290,34 +345,9 @@ namespace Bikes.ViewModel
             }
         }
 
-        private void UpdateStations(StationData data)
+        private void Timer_Tick(object sender, object e)
         {
-            DispatcherHelper.CheckBeginInvokeOnUI(() =>
-                {
-                    Station selected = this.CurrentStation;
-
-                    foreach (var station in data.Stations)
-                    {
-                        var index = this.StationSource.IndexOf(station);
-                        if (index == -1)
-                        {
-                            this.StationSource.Add(station);
-                        }
-                        else
-                        {
-                            var item = this.StationSource[index];
-                            item.Update(station);
-                        }
-                    }
-
-                    this.SelectStation(selected);
-                    this.SetLoadingStatus(false, data.LastUpdated);
-                });
-        }
-
-        private void TimerTick(object sender, EventArgs e)
-        {
-           
+            this.LoadStationDataAsync();
         }
 
         private void SetLoadingStatus(bool status, string message)
@@ -334,10 +364,10 @@ namespace Bikes.ViewModel
             }
 
             var ordered = this.StationSource.OrderBy(x => x.Distance);
-            this.StationSource = new ObservableCollection<Station>(ordered);
+            this.StationSource = new ObservableCollection<StationViewModel>(ordered);
         }
 
-        private bool StationSourceFilter(Station station)
+        private bool StationSourceFilter(StationViewModel station)
         {
             if (station == null)
             {
@@ -362,7 +392,7 @@ namespace Bikes.ViewModel
         private async Task InitializeGeoLocator()
         {
             var accessStatus = await Geolocator.RequestAccessAsync();
-            string status;
+            string status = null;
             switch (accessStatus)
             {
                 case GeolocationAccessStatus.Allowed:
@@ -391,6 +421,11 @@ namespace Bikes.ViewModel
                     status = "Unspecified error.";
                     UpdateLocationData(null);
                     break;
+            }
+
+            if (status != null)
+            {
+                Messenger.Default.Send<StatusMessage>(new StatusMessage(status));
             }
         }
 
