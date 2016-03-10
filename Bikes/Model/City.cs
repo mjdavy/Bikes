@@ -5,18 +5,7 @@ namespace Bikes.Model
 {
     public class City
     {
-        public enum VendorType
-        {
-            CityBikes,
-            NextBike
-        };
-
-        public VendorType Vendor
-        {
-            get;
-            set;
-        }
-
+      
         public string Name
         {
             get;
@@ -27,25 +16,6 @@ namespace Bikes.Model
         {
             get;
             set;
-        }
-
-        public bool UseCacheHack
-        {
-            get;
-            set;
-        }
-
-        public Uri DataSource
-        {
-            get
-            {
-                if (this.UseCacheHack)
-                {
-                    return new Uri(string.Format("{0}?nocache={1}", Url, DateTime.Now.Ticks));
-                }
-
-                return new Uri(Url);
-            }
         }
 
         public string Url

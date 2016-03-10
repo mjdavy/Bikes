@@ -38,7 +38,7 @@ namespace Bikes.Model
         }
 
         [JsonProperty("stations")]
-        public BikeShareStations Stations
+        public IList<BikeShareStation> Stations
         {
             get;
             set;

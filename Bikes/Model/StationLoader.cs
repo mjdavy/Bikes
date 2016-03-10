@@ -25,7 +25,7 @@ namespace Bikes.Model
             try
             {
                 var Uri = new Uri(baseUri, "/v2/networks");
-                var networksJson = await client.GetStringAsync(baseUri);
+                var networksJson = await client.GetStringAsync(Uri);
                 networks =  await Task.Factory.StartNew(() => JsonConvert.DeserializeObject<BikeShareNetworks>(networksJson));
             }
             catch (Exception ex)
@@ -40,20 +40,25 @@ namespace Bikes.Model
         {
             var client = new HttpClient();
             client.DefaultRequestHeaders.Add("user-agent", userAgent);
-            var network = new BikeShareNetwork();
+            var bikeshare = new BikeShareNetwork();
             
             try
             {
                 var endPoint = new Uri(baseUri, networkEndPoint);
                 var networkJson = await client.GetStringAsync(endPoint);
-                network = await Task.Factory.StartNew(() => JsonConvert.DeserializeObject<BikeShareNetwork>(networkJson));
+                var info = await Task.Factory.StartNew(() => JsonConvert.DeserializeObject<BikeShareNetworkInfo>(networkJson));
+
+                if (info != null && info.Network != null)
+                {
+                    bikeshare = info.Network;
+                }
             }
             catch (Exception ex)
             { 
                 Debug.WriteLine(ex.Message);
             }
 
-            return network;
+            return bikeshare;
         }
 
     }

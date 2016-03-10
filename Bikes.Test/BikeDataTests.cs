@@ -19,11 +19,11 @@ namespace Bikes.Test
 
         [TestMethod]
         public async Task TestNetwork()
-        {
+            {
             StationLoader loader = new StationLoader();
             var bikeNetwork = await loader.LoadBikeShareAsync("/v2/networks/hubway");
             Assert.IsNotNull(bikeNetwork);
-            Assert.IsTrue(bikeNetwork.Stations.Stations.Count > 0);
+            Assert.IsTrue(bikeNetwork.Stations.Count > 0);
         }
     }
 }

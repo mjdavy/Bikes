@@ -79,50 +79,50 @@ namespace Bikes.Model
             }
         }
 
-        public static async void LoadCities()
+        public static async Task LoadCities()
         {
-            cities.Clear();
+            //cities.Clear();
 
-            var bikeShares = new Uri("ms-appx:///Assets/BikeShares.xml");
-            StorageFile sFile = await StorageFile.GetFileFromApplicationUriAsync(bikeShares);
-            XDocument doc = null;
-            using (var stream = await sFile.OpenStreamForReadAsync())
-            {
-                doc = XDocument.Load(stream);
-            }
+            //var bikeShares = new Uri("ms-appx:///Assets/BikeShares.xml");
+            //StorageFile sFile = await StorageFile.GetFileFromApplicationUriAsync(bikeShares);
+            //XDocument doc = null;
+            //using (var stream = await sFile.OpenStreamForReadAsync())
+            //{
+            //    doc = XDocument.Load(stream);
+            //}
 
-            foreach (var xmlBikeShare in doc.Descendants("BikeShare"))
-            {
-                var vendor = xmlBikeShare.Element("Vendor").Value;
-                var cityName = xmlBikeShare.Element("City").Value;
-                var country = new Country(xmlBikeShare.Element("Country").Value);
-                var serviceUrl = xmlBikeShare.Element("Url").Value;
-                var cacheHack = xmlBikeShare.Element("CacheHack").ToInt(0) == 0 ? false : true;
-                var location = xmlBikeShare.ToBCycleGeoCoordinate();
-                var city = new City
-                    {
-                        Vendor = (City.VendorType)Enum.Parse(typeof(City.VendorType), vendor, true),
-                        Name = cityName,
-                        Country = country,
-                        Url = serviceUrl,
-                        UseCacheHack = cacheHack,
-                        Center = location
-                    };
+            //foreach (var xmlBikeShare in doc.Descendants("BikeShare"))
+            //{
+            //    var vendor = xmlBikeShare.Element("Vendor").Value;
+            //    var cityName = xmlBikeShare.Element("City").Value;
+            //    var country = new Country(xmlBikeShare.Element("Country").Value);
+            //    var serviceUrl = xmlBikeShare.Element("Url").Value;
+            //    var cacheHack = xmlBikeShare.Element("CacheHack").ToInt(0) == 0 ? false : true;
+            //    var location = xmlBikeShare.ToBCycleGeoCoordinate();
+            //    var city = new City
+            //    {
+            //        Vendor = (City.VendorType)Enum.Parse(typeof(City.VendorType), vendor, true),
+            //        Name = cityName,
+            //        Country = country,
+            //        Url = serviceUrl,
+            //        UseCacheHack = cacheHack,
+            //        Center = location
+            //    };
 
-                if (!cities.Keys.Contains(cityName))
-                {
-                    cities.Add(cityName, city);
-                }
+            //    if (!cities.Keys.Contains(cityName))
+            //    {
+            //        cities.Add(cityName, city);
+            //    }
 
-                if (!Countries.AllCountries.Keys.Contains(country.Name))
-                {
-                    Countries.AllCountries.Add(country.Name, country);
-                }
-            }
+            //    if (!Countries.AllCountries.Keys.Contains(country.Name))
+            //    {
+            //        Countries.AllCountries.Add(country.Name, country);
+            //    }
+            //}
 
         }
 
-       
+
         internal static async Task InitializeAsync()
         {
             LoadCities();

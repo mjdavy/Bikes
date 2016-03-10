@@ -168,6 +168,7 @@ namespace Bikes.ViewModel
         {
             await this.InitializeGeoLocator();
             await Cities.InitializeAsync();
+            await this.LoadStationDataAsync();
            // FIXME var position = await Cities.FindMyLocationAsync();
 
             //if (position != null)
@@ -255,7 +256,7 @@ namespace Bikes.ViewModel
                 this.timer.Stop();
                 this.SetLoadingStatus(true, "Updating Bike Stations.");
                 var stationData = await this.stationLoader.LoadBikeShareAsync("/v2/networks/hubway"); // MJDTODO - remove hard code
-                var viewModels = await this.CreateViewModelsAsync(stationData.Stations);
+                var viewModels = await this.CreateViewModelsAsync(stationData);
                 this.UpdateViewModels(viewModels);
                 this.timer.Start();
             }
@@ -265,7 +266,7 @@ namespace Bikes.ViewModel
             }
         }
 
-        public async Task<IDictionary<Guid, StationViewModel>> CreateViewModelsAsync(BikeShareStations bikeShare)
+        public async Task<IDictionary<Guid, StationViewModel>> CreateViewModelsAsync(BikeShareNetwork bikeShare)
         {
             var vmDict = new Dictionary<Guid, StationViewModel>();
 
@@ -345,9 +346,9 @@ namespace Bikes.ViewModel
             }
         }
 
-        private void Timer_Tick(object sender, object e)
+        private async void Timer_Tick(object sender, object e)
         {
-            this.LoadStationDataAsync();
+           await this.UpdateStationDataAsync();
         }
 
         private void SetLoadingStatus(bool status, string message)
@@ -440,6 +441,7 @@ namespace Bikes.ViewModel
         private void UpdateLocationData(Geoposition pos)
         {
             this.MyLocation = new Geopoint(new BasicGeoposition { Latitude = pos.Coordinate.Latitude, Longitude = pos.Coordinate.Longitude });
+            this.CenterMapToMyLocation();
         }
 
         private void Geolocator_StatusChanged(Geolocator sender, StatusChangedEventArgs args)
