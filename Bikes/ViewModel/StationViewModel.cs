@@ -37,7 +37,7 @@ namespace Bikes.ViewModel
             vm.Locked = bikeShareStation.Extra.Locked;
             vm.Installed = bikeShareStation.Extra.Installed;
             vm.location = new Geopoint(
-                new BasicGeoposition { Latitude = bikeShareStation.Latitude, Longitude = bikeShareStation.Latitude });
+                new BasicGeoposition { Latitude = bikeShareStation.Latitude, Longitude = bikeShareStation.Longitude });
 
             vm.CalcPieArc(vm.BikeCount, vm.EmptyDockCount);
             vm.DetermineAvailability();

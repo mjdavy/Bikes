@@ -33,8 +33,8 @@
                             <StackPanel Orientation="Vertical">
                                 <Border Name="Details" Background="Black" Opacity="0.75" CornerRadius="4" Margin="0,0,0,2" Visibility="{Binding DetailsVisibility}">
                                     <StackPanel Margin="8">
-                                        <TextBlock Foreground="White" FontWeight="Bold" Text="{Binding Name}" />
-                                        <TextBlock Foreground="White" Text="{Binding StationInfo}" />
+                                        <TextBlock Foreground="White" FontWeight="Bold" Text="{Binding Name}"  Style="{StaticResource BaseTextBlockStyle}" />
+                                        <TextBlock Foreground="White" Text="{Binding StationInfo}"  Style="{StaticResource CaptionTextBlockStyle}" />
                                     </StackPanel>
                                 </Border>
                                 <Canvas Name="Pin" Width="28" Height="54" VerticalAlignment="Bottom">

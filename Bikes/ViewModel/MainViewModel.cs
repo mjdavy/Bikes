@@ -167,19 +167,9 @@ namespace Bikes.ViewModel
         public async void Start()
         {
             await this.InitializeGeoLocator();
-            await Cities.InitializeAsync();
             await this.LoadStationDataAsync();
-           // FIXME var position = await Cities.FindMyLocationAsync();
-
-            //if (position != null)
-            //{
-            //    this.MyLocation = new Geopoint(new BasicGeoposition { Latitude = position.Coordinate.Latitude, Longitude = position.Coordinate.Longitude });
-            //    this.CenterMapToMyLocation();
-            //    this.LoadStationDataAsync();
-            //}
+            this.CenterMapToMyLocation();
         }
-
-       
 
         #region commands
 
@@ -441,7 +431,6 @@ namespace Bikes.ViewModel
         private void UpdateLocationData(Geoposition pos)
         {
             this.MyLocation = new Geopoint(new BasicGeoposition { Latitude = pos.Coordinate.Latitude, Longitude = pos.Coordinate.Longitude });
-            this.CenterMapToMyLocation();
         }
 
         private void Geolocator_StatusChanged(Geolocator sender, StatusChangedEventArgs args)
